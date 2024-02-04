@@ -6,7 +6,10 @@ const utilisateurSchema = new Schema({
   prenom: { type: String, required: true },
   roleId: { type: mongoose.Schema.Types.ObjectId, ref: 'role', required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String, required: false },
+  estActif: { type: Boolean, default: false },
+  tokenActivation: { type: String },
+  expirationToken: { type: Date }
 });
 
 module.exports = mongoose.model('utilisateur', utilisateurSchema);
