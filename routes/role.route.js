@@ -3,7 +3,7 @@ var router = express.Router();
 const ctrl = require('../controller/role.controller');
 
 
-let route = '/roles';
+let route = '/login';
 
 router.post(`${route}`, ctrl.create);
 router.get(`${route}`, ctrl.findAll);

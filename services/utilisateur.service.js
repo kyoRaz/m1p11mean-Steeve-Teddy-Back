@@ -69,11 +69,18 @@ const ajoutEmploye = async (data) => {
 
 const findAll = async () => {
   try {
-    let list = await Utilisateur.find().populate('roleId')
-      .then(commandes => {
-        console.log(commandes);
-      });
+    let list = await Utilisateur.find().populate('roleId');
     return list;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const finbByEmail = async (email) => {
+  try {
+    let user = await Utilisateur.findOne({ email }).populate('roleId');
+
+    return user;
   } catch (error) {
     throw error;
   }
@@ -136,6 +143,12 @@ const activeAndPasswd = async (id, password) => {
   }
 }
 
+const withoutPassword = (user) => {
+  user = user?._doc;
+  const { password, tokenActivation, expirationToken, ...monUser } = user;
+  return monUser;
+}
+
 module.exports = {
   inscriptionClient,
   findAll,
@@ -143,5 +156,7 @@ module.exports = {
   deleteById,
   ajoutEmploye,
   getUserByTokenActivation,
-  activeAndPasswd
+  activeAndPasswd,
+  finbByEmail,
+  withoutPassword
 };
