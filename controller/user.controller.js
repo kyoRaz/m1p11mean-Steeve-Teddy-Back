@@ -150,3 +150,15 @@ exports.activeAndPasswd = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 }
+
+exports.listEmploye = async (req, res) => {
+    try {
+
+        let list = await utilisateurService.getListEmploye();
+        return res.status(200).json({ resultat: list });
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: error.message });
+    }
+}

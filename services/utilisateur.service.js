@@ -149,6 +149,19 @@ const withoutPassword = (user) => {
   return monUser;
 }
 
+const getListEmploye = async () => {
+  try {
+    let list = await Utilisateur.find({
+      roleId: process.env.ROLE_EMPLOYE
+    }).populate('roleId');
+    return list;
+  } catch (error) {
+    throw error;
+  }
+}
+
+
+
 module.exports = {
   inscriptionClient,
   findAll,
@@ -158,5 +171,6 @@ module.exports = {
   getUserByTokenActivation,
   activeAndPasswd,
   finbByEmail,
-  withoutPassword
+  withoutPassword,
+  getListEmploye
 };

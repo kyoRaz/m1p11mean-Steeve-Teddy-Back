@@ -11,4 +11,5 @@ router.post(`${route}`, ctrl.signUp);
 router.post(`${route}/employe`, ctrl.createEmploye);
 router.post(`${route}/activation`, ctrl.activationUser);
 router.post(`${route}/pwsd`, ctrl.activeAndPasswd);
+router.get(`${route}/employes`, ctrl.listEmploye);
 module.exports = router;
