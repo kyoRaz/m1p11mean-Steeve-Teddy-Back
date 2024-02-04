@@ -2,9 +2,10 @@ const Utilisateur = require('../models/Utilisateur');
 const bcrypt = require('bcrypt');
 
 
-async function doInscription(nom, prenom, dateNaissance, adresse, login, motdepasse) {
+async function doInscription(nom, prenom, email, motdepasse) {
   try {
-    const utilisateurExistant = await Utilisateur.findOne({ login });
+
+    const utilisateurExistant = await Utilisateur.findOne({ email });
     if (utilisateurExistant) {
       throw new Error('Cet utilisateur existe déjà.');
     }
@@ -14,9 +15,7 @@ async function doInscription(nom, prenom, dateNaissance, adresse, login, motdepa
     const nouvelUtilisateur = new Utilisateur({
       nom,
       prenom,
-      dateNaissance,
-      adresse,
-      login,
+      email,
       motdepasse: motdepasseHache,
     });
 

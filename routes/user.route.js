@@ -7,9 +7,6 @@ let route = '/users';
 
 /* GET users listing. */
 // router.get('/', ctrl.getListUser);
-// router.post('/signup', ctrl.signUp);
-router.get(`${route}`, (req, res) => {
-    res.status(200).json({ message: "Hi" });
-});
+router.post(`${route}`, ctrl.signUp);
 
 module.exports = router;

@@ -3,10 +3,10 @@ var express = require('express');
 var cors = require('cors');
 const routes = require("./routes");
 const bodyParser = require("body-parser");
+require('./dbconnection/db');
 
 var app = express();
 
-require('dotenv').config();
 
 app.use(cors('*'));
 app.use(bodyParser.json());

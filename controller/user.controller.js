@@ -15,14 +15,12 @@ exports.getListUser = async (req, res) => {
 
 exports.signUp = async (req, res) => {
     try {
-        const { nom, prenom, dateNaissance, adresse, login, motdepasse } = req.body;
+        const { nom, prenom, email, password } = req.body;
         const nouvelUtilisateur = await utilisateurService.doInscription(
             nom,
             prenom,
-            dateNaissance,
-            adresse,
-            login,
-            motdepasse
+            email,
+            password
         );
         res.status(201).json(nouvelUtilisateur);
     } catch (error) {
