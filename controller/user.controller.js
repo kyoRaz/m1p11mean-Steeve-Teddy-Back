@@ -5,11 +5,11 @@ const outil = require('../helpers/outil')
 exports.getListUser = async (req, res) => {
     try {
         let list = await utilisateurService.getAllUser();
-        res.status(200).json({
+        return res.status(200).json({
             data: list
         });
     } catch (error) {
-        res.status(500).json({ message: "Error Server" });
+        return res.status(500).json({ message: "Error Server" });
     }
 }
 
@@ -69,15 +69,16 @@ exports.signUp = async (req, res) => {
             roleId
         };
         const nouvelUtilisateur = await utilisateurService.inscriptionClient(data);
-        res.status(200).json(nouvelUtilisateur);
+        return res.status(200).json(nouvelUtilisateur);
     } catch (error) {
         console.log(error)
-        res.status(400).json({ message: "Bad Request", details: error.message });
+        return res.status(500).json({ message: error.message });
     }
 }
 
 exports.createEmploye = async (req, res) => {
     try {
+
         const { nom, prenom, email } = req.body;
         const validationResult = controlBody(req, res);
         if (validationResult !== true) {
@@ -88,10 +89,64 @@ exports.createEmploye = async (req, res) => {
             prenom,
             email,
         };
-        const nouvelUtilisateur = await utilisateurService.ajoutEmploye(data);
-        res.status(200).json(nouvelUtilisateur);
+        await utilisateurService.ajoutEmploye(data);
+        return res.status(200).json({ message: "nouvel  utilisateur  ajouté " });
     } catch (error) {
         console.log(error)
-        res.status(400).json({ message: "Bad Request", details: error.message });
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+exports.activationUser = async (req, res) => {
+    try {
+
+        const token = req.body.token;
+
+        let user = await utilisateurService.getUserByTokenActivation(token);
+        if (!user) {
+            return res.status(400).json({ message: "Bad Request", details: "Token expiré" });
+        }
+        return res.status(200).json({ id: user._id });
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+const confirmPassword = (req, res) => {
+    let { password, confirmPWD } = req.body
+    let isPwd = outil.isValidPassword(password, confirmPWD);
+    if (!isPwd) {
+        res.status(400).json({ message: 'Bad Request', details: "les mots de passe ne correspendent pas", body: "password" });
+        return false;
+    } else {
+        let isSup = outil.isValidMinimumLength(password);
+        if (!isSup) {
+            res.status(400).json({ message: 'Bad Request', details: "les mots de passe inferieur à 8 caractéres", body: "password" });
+            return false;
+        }
+    }
+    return true;
+}
+
+exports.activeAndPasswd = async (req, res) => {
+    try {
+
+        const { idUser, password } = req.body;
+        const validPwd = confirmPassword(req, res)
+        if (validPwd !== true) {
+            return;
+        }
+
+        let user = await utilisateurService.activeAndPasswd(idUser, password);
+        if (!user) {
+            return res.status(400).json({ message: "Bad Request", details: "Utilisateur  introuvable" });
+        }
+        return res.status(200).json({ message: "modification effectué" });
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: error.message });
     }
 }

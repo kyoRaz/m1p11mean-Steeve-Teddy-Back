@@ -40,6 +40,33 @@ const sendMail = () => {
     }
 }
 
+const sendMailActivation = (mailUser, token) => {
+    try {
+        // Configuration du transporteur SMTP
+        let config = getEmailTransport();
+        let transporter = nodemailer.createTransport(config);
+
+        // Options de l'email
+        let mailOptions = {
+            to: mailUser,
+            subject: 'Activation de votre compte',
+            html: `<p>Cliquez sur le lien suivant pour activer votre compte :</p><a href="https:www.monAppKo.com/${token}">Activer mon compte</a>`
+        };
+
+        // Envoi de l'email
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email envoyé : ' + info.response);
+            }
+        });
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
-    sendMail
+    sendMail,
+    sendMailActivation
 }

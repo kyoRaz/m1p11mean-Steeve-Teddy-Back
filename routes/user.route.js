@@ -9,5 +9,6 @@ let route = '/users';
 router.get(`${route}`, ctrl.getListUser);
 router.post(`${route}`, ctrl.signUp);
 router.post(`${route}/employe`, ctrl.createEmploye);
-
+router.post(`${route}/activation`, ctrl.activationUser);
+router.post(`${route}/pwsd`, ctrl.activeAndPasswd);
 module.exports = router;
