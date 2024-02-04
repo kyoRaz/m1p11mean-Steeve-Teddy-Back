@@ -15,16 +15,19 @@ exports.getListUser = async (req, res) => {
 
 exports.signUp = async (req, res) => {
     try {
-        const { nom, prenom, email, password } = req.body;
-        const nouvelUtilisateur = await utilisateurService.doInscription(
+        const { nom, prenom, email, password, roleId } = req.body;
+        // Ampina  Controlle  
+        let data = {
             nom,
             prenom,
             email,
-            password
-        );
+            password,
+            roleId
+        };
+        const nouvelUtilisateur = await utilisateurService.inscriptionClient(data);
         res.status(200).json(nouvelUtilisateur);
     } catch (error) {
-        console.log("🚀 ~ file: user.controller.js:16 ~ exports.signUp= ~ error:", error)
-        res.status(400).json({ message: error.message });
+        console.log(error)
+        res.status(400).json({ message: "Bad Request", details: error.message });
     }
 }
