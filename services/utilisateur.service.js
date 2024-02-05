@@ -160,6 +160,44 @@ const getListEmploye = async () => {
   }
 }
 
+const findAndFilter = async (filter, orderBy, page, limit) => {
+  try {
+    const skip = (page - 1) * limit;
+
+    const query = {};
+
+    if (filter) {
+      Object.assign(query, filter);
+    }
+
+    const sort = {};
+
+    if (orderBy) {
+      const [field, order] = orderBy.split(':'); // Split de "fieldName:order" en tableau
+      sort[field] = order === 'desc' ? -1 : 1; // -1 pour décroissant, 1 pour croissant
+    }
+
+    const totalDocuments = await Utilisateur.countDocuments(query);
+
+    const users = await Utilisateur.find(query)
+      .sort(sort)
+      .skip(skip)
+      .limit(parseInt(limit))
+      .exec();
+
+    const totalPages = Math.ceil(totalDocuments / parseInt(limit));
+
+    return {
+      total: totalDocuments,
+      totalPages: totalPages,
+      page: parseInt(page),
+      limit: parseInt(limit),
+      users: users,
+    };
+  } catch (error) {
+    throw error;
+  }
+};
 
 
 module.exports = {
@@ -172,5 +210,6 @@ module.exports = {
   activeAndPasswd,
   finbByEmail,
   withoutPassword,
-  getListEmploye
+  getListEmploye,
+  findAndFilter
 };

@@ -162,3 +162,25 @@ exports.listEmploye = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 }
+
+exports.findAll = async (req, res) => {
+    
+    try {
+        let { page, limit, filter } = req.query;
+    
+        if (!page || isNaN(page) || page < 1) {
+            page = 1;
+        }
+    
+        if (!limit || isNaN(limit) || limit < 1) {
+            limit = 10;
+        }
+    
+        let result =  await  utilisateurService.findAndFilter(filter, null, page, limit);
+
+        return res.status(200).json(result);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Une erreur s\'est produite' });
+    }
+}

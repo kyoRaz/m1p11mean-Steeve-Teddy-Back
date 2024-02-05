@@ -6,7 +6,8 @@ const ctrl = require('../controller/user.controller');
 let route = '/users';
 
 /* GET users listing. */
-router.get(`${route}`, ctrl.getListUser);
+// router.get(`${route}`, ctrl.getListUser);
+router.get(`${route}`, ctrl.findAll);
 router.post(`${route}`, ctrl.signUp);
 router.post(`${route}/employe`, ctrl.createEmploye);
 router.post(`${route}/activation`, ctrl.activationUser);
