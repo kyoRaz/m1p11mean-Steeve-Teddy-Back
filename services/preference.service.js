@@ -23,6 +23,18 @@ const find = async () => {
     }
 }
 
+const findOne = async (data) => {
+    try {
+        let list = await Preference.findOne(data).populate({
+            path: 'idEmpFav',
+            select: '_id nom prenom',
+        }).populate('idService')
+        return list;
+    } catch (error) {
+        throw error;
+    }
+}
+
 const update = async (id, data) => {
     try {
         const update = {
@@ -49,6 +61,7 @@ const deleteById = async (id) => {
 module.exports = {
     create,
     find,
+    findOne,
     update,
     deleteById
 }
