@@ -93,6 +93,35 @@ const  valideFormatHeure= (heureString) =>{
 }
 
 
+const controlIntervalDate = (req, res) => {
+    try {
+        let { dateDebut, dateFin } = req.query;
+        let debut;
+        if (dateDebut) {
+            debut = new Date(dateDebut);
+            if (isNaN(debut.getTime())) {
+                res.status(400).json({ message: "Bad Request ", details: "La dateDebut fournie n est pas valide" });
+                return false;
+            }
+        }
+        let fin;
+        if (dateFin) {
+            fin = new Date(dateFin);
+            if (isNaN(fin.getTime())) {
+                res.status(400).json({ message: "Bad Request ", details: "La dateFin fournie n est pas valide" });
+                return false;
+            }
+        }
+        if (debut && fin && debut >= fin) {
+            res.status(400).json({ message: "Bad Request ", details: "La date de début doit être antérieure à la date de fin" });
+            return false;
+        }
+        return true;
+    } catch (error) {
+        throw error;
+    }
+}
+
 
 module.exports = {
     createDoubleNonNull,
@@ -104,5 +133,6 @@ module.exports = {
     estInfCurrentDate,
     casteNbr,
     ajusterHeureDate,
-    valideFormatHeure
+    valideFormatHeure,
+    controlIntervalDate
 }

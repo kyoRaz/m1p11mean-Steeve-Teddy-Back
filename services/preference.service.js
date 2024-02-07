@@ -28,7 +28,7 @@ const findOne = async (data) => {
         let list = await Preference.findOne(data).populate({
             path: 'idEmpFav',
             select: '_id nom prenom',
-        }).populate('idService')
+        }).populate('idService');
         return list;
     } catch (error) {
         throw error;

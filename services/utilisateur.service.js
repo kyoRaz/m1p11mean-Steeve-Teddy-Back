@@ -203,6 +203,7 @@ const findAndFilter = async (filter, orderBy, page, limit) => {
     }
 
     const totalDocuments = await Utilisateur.countDocuments(query);
+    const totalPages = Math.ceil(totalDocuments / parseInt(limit));
 
     const users = await Utilisateur.find(query)
       .sort(sort)
@@ -210,7 +211,6 @@ const findAndFilter = async (filter, orderBy, page, limit) => {
       .limit(parseInt(limit))
       .exec();
 
-    const totalPages = Math.ceil(totalDocuments / parseInt(limit));
 
     return {
       total: totalDocuments,
