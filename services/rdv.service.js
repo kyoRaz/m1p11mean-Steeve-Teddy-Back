@@ -90,17 +90,6 @@ const findById = async (id) => {
     }
 }
 
-const findById = async (id) => {
-    try {
-        let result = await Rdv.findById(id).populate(({
-            path: 'idUser',
-            select: '_id nom prenom',
-        }));
-        return result;
-    } catch (error) {
-        throw error;
-    }
-}
 
 const update = async (id, data) => {
     try {
