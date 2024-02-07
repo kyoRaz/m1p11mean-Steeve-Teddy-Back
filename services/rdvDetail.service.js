@@ -13,7 +13,10 @@ const create = async (data) => {
 
 const find = async () => {
     try {
-        let list = await RdvDetail.find();
+        let list = await RdvDetail.find().populate({
+            path: 'idEmploye',
+            select: '_id nom prenom',
+        }).populate('idService');;
         return list;
     } catch (error) {
         throw error;
@@ -22,7 +25,10 @@ const find = async () => {
 
 const findById = async (id) => {
     try {
-        let result = await RdvDetail.findById(id);
+        let result = await RdvDetail.findById(id).populate({
+            path: 'idEmploye',
+            select: '_id nom prenom',
+        }).populate('idService');;
         return result;
     } catch (error) {
         throw error;
@@ -52,10 +58,34 @@ const deleteById = async (id) => {
 }
 
 
+const findByIntervale = async (heureDebut, heureFin) => {
+    try {
+
+        let query = {};
+
+        if (heureDebut) {
+            query.heure = { ...query.heure, $gte: heureDebut };
+        }
+        if (heureFin) {
+            query.heure = { ...query.heure, $lte: heureFin };
+        }
+
+        let list = await RdvDetail.find(query).populate({
+            path: 'idEmploye',
+            select: '_id nom prenom',
+        }).populate('idService').sort({ heure: 1 });
+        return list;
+    } catch (error) {
+        throw error;
+    }
+}
+
+
 module.exports = {
     create,
     find,
     findById,
     update,
-    deleteById
+    deleteById,
+    findByIntervale
 }

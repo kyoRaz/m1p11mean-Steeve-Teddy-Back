@@ -5,17 +5,17 @@ const userService = require('../services/utilisateur.service');
 const outilHelper = require('../helpers/outil');
 
 
-const  controlInput  =  async (req, res)=>{
+const controlInput = async (req, res) => {
     try {
-        let {idRdv,idService,idEmploye,heure} = req.body;
+        let { idRdv, idService, idEmploye, heure } = req.body;
 
         let rdv;
-        if (!idRdv || idRdv=="") {
+        if (!idRdv || idRdv == "") {
             res.status(400).json({ message: "idRdv vide" });
             return false;
-        }else{
+        } else {
             rdv = await rdvService.findById(idRdv);
-            if(!rdv){
+            if (!rdv) {
                 res.status(400).json({ message: "RDV  introuvable" });
                 return false;
             }
@@ -23,9 +23,9 @@ const  controlInput  =  async (req, res)=>{
 
         if (!idService || idService === "") {
             res.status(400).json({ message: "idService vide" });
-        }else{
+        } else {
             rdv = await srvService.findById(idService);
-            if(!rdv){
+            if (!rdv) {
                 res.status(400).json({ message: "Service  introuvable" });
                 return false;
             }
@@ -34,9 +34,9 @@ const  controlInput  =  async (req, res)=>{
         if (!idEmploye || idEmploye === "") {
             res.status(400).json({ message: "idEmploye vide" });
             return false;
-        }else{
+        } else {
             rdv = await userService.findEmp(idEmploye);
-            if(!rdv){
+            if (!rdv) {
                 res.status(400).json({ message: "Employé  introuvable" });
                 return false;
             }
@@ -48,15 +48,15 @@ const  controlInput  =  async (req, res)=>{
             return false;
         }
 
-        return true ;
+        return true;
     } catch (error) {
-        throw error ;
+        throw error;
     }
 }
 
 exports.create = async (req, res) => {
     try {
-        let {idRdv,idService,idEmploye,heure} = req.body;
+        let { idRdv, idService, idEmploye, heure } = req.body;
 
         const validateInput = await controlInput(req, res);
         if (validateInput !== true) {
@@ -64,15 +64,15 @@ exports.create = async (req, res) => {
         }
 
         let rdv = await rdvService.findById(idRdv);
-        let dateRdv = rdv.dateRdv ;
-        let horaireService= outilHelper.ajusterHeureDate(dateRdv,heure);
+        let dateRdv = rdv.dateRdv;
+        let horaireService = outilHelper.ajusterHeureDate(dateRdv, heure);
         let data = {
             idRdv,
             idService,
             idEmploye,
             horaireService,
             heure,
-            statusService :"Nouveau"
+            statusService: "Nouveau"
         }
 
         let result = await rdvDetailService.create(data);
@@ -93,14 +93,25 @@ exports.findAll = async (req, res) => {
     }
 }
 
+exports.findIntervale = async (req, res) => {
+    try {
+        let { heureDebut, heureFin } = req.body;
+        let list = await rdvDetailService.findByIntervale(heureDebut, heureFin);
+        res.status(200).json({ size: list.length, resultat: list });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
+
 exports.findOne = async (req, res) => {
     try {
         let id = req.params.id;
         let result = await rdvDetailService.findById(id);
-        if(result){
+        if (result) {
             res.status(200).json({ result });
-        }else{
-            res.status(404).json({ message :"Entité  introuvable " });
+        } else {
+            res.status(404).json({ message: "Entité  introuvable " });
         }
     } catch (error) {
         console.log(error);
@@ -112,7 +123,7 @@ exports.update = async (req, res) => {
     try {
         let id = req.params.id;
         let idUser = '65bf4a4ababc23a0ac0ce336';
-        let {dateRdv } = req.body;
+        let { dateRdv } = req.body;
 
         if (!dateRdv || !Date.parse(dateRdv)) {
             res.status(400).json({ message: "dateRdv est requis et doit être au format DateTime valide." });
@@ -120,7 +131,7 @@ exports.update = async (req, res) => {
 
         let data = {
             idUser,
-            dateCreation : new Date(),
+            dateCreation: new Date(),
             dateRdv
         }
 
