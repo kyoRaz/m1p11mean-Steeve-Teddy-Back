@@ -20,6 +20,15 @@ const find = async () => {
     }
 }
 
+const findById = async (id) => {
+    try {
+        let result = await RdvDetail.findById(id);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
+
 const update = async (id, data) => {
     try {
         const update = {
@@ -46,6 +55,7 @@ const deleteById = async (id) => {
 module.exports = {
     create,
     find,
+    findById,
     update,
     deleteById
 }

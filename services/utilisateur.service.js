@@ -86,6 +86,31 @@ const finbByEmail = async (email) => {
   }
 }
 
+const finbById = async (id) => {
+  try {
+    let user = await Utilisateur.findById(id).populate('roleId');
+    return user;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const findEmp = async (id) => {
+  try {
+    let user = await Utilisateur.findById(id).populate('roleId');
+
+    let idRole = process.env.ROLE_EMPLOYE;
+    if (user && user.roleId && user.roleId._id.toString() === idRole) {
+      return user; 
+    } else {
+      return null; 
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+
 const update = async (id, data) => {
   try {
     const update = {
@@ -211,5 +236,7 @@ module.exports = {
   finbByEmail,
   withoutPassword,
   getListEmploye,
-  findAndFilter
+  findAndFilter,
+  finbById,
+  findEmp
 };

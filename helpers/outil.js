@@ -72,6 +72,27 @@ function casteNbr(str) {
     }
 }
 
+const  ajusterHeureDate = (dateObjet, heureString) => {
+
+let composantesHeure = heureString.split(":");
+
+if (composantesHeure.length === 3) {
+    dateObjet.setHours(parseInt(composantesHeure[0])); // Heures
+    dateObjet.setMinutes(parseInt(composantesHeure[1])); // Minutes
+    dateObjet.setSeconds(parseInt(composantesHeure[2])); // Secondes
+} else {
+    throw new Error("Format de l'heure invalide. Assurez-vous que le format est HH:MM:SS.");
+}
+
+return dateObjet;
+}
+
+const  valideFormatHeure= (heureString) =>{
+    const regexHeure = /^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9]):([0-5]?[0-9])$/;
+    return regexHeure.test(heureString);
+}
+
+
 
 module.exports = {
     createDoubleNonNull,
@@ -82,4 +103,6 @@ module.exports = {
     estDateInferieure,
     estInfCurrentDate,
     casteNbr,
+    ajusterHeureDate,
+    valideFormatHeure
 }

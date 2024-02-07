@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
-const ctrl = require('../controller/rdv.controller');
+const ctrl = require('../controller/rdvDetail.controller');
 
 
-let route = '/rdvs';
+let route = '/rdvDetails';
 
 router.post(`${route}`, ctrl.create);
 router.get(`${route}`, ctrl.findAll);
