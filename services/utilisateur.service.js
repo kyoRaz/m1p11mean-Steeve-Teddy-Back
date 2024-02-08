@@ -98,7 +98,6 @@ const finbById = async (id) => {
 const findEmp = async (id) => {
   try {
     let user = await Utilisateur.findById(id).populate('roleId');
-
     let idRole = process.env.ROLE_EMPLOYE;
     if (user && user.roleId && user.roleId._id.toString() === idRole) {
       return user; 
