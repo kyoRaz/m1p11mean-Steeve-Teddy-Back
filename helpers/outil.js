@@ -122,6 +122,21 @@ const controlIntervalDate = (req, res) => {
     }
 }
 
+const  heuretAnterieur= (heure1, heure2) =>{
+    const regex = /^(2[0-3]|[01]?[0-9]):([0-5]?[0-9]):([0-5]?[0-9])$/;
+
+    if (!regex.test(heure1) || !regex.test(heure2)) {
+        throw new Error("Format invalide. Les heures doivent être au format HH:mm:ss.");
+    }
+
+    const dateBase = '1970-01-01';
+    const heure1Obj = new Date(`${dateBase}T${heure1}Z`);
+    const heure2Obj = new Date(`${dateBase}T${heure2}Z`);
+
+    // return heure2Obj >= heure1Obj;
+    return heure1Obj >= heure2Obj;
+}
+
 
 module.exports = {
     createDoubleNonNull,
@@ -134,5 +149,6 @@ module.exports = {
     casteNbr,
     ajusterHeureDate,
     valideFormatHeure,
-    controlIntervalDate
+    controlIntervalDate,
+    heuretAnterieur
 }
