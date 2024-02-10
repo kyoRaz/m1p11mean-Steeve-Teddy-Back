@@ -12,6 +12,12 @@ app.use(cors('*'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+
+// importation swagger
+const swaggerUi = require('swagger-ui-express');
+const specs = require('./swagger-config');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+
 //morgan
 const morgan = require('morgan');
 app.use(morgan('dev'));
