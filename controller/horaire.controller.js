@@ -5,7 +5,7 @@ const outilHelper = require('../helpers/outil');
 
 const controlInput = async (req, res) => {
     try {
-        let { idEmploye, heureDebut,heureFin,pauseDebut,pauseFin } = req.body;
+        let { idEmploye, heureDebut, heureFin, pauseDebut, pauseFin } = req.body;
 
 
         if (!idEmploye || idEmploye === "") {
@@ -27,9 +27,9 @@ const controlInput = async (req, res) => {
             res.status(400).json({ message: "heureFin invalide ou vide. Le format attendu est HH:mm:ss." });
             return false;
         }
-        
-        let estAnterieur =outilHelper.heuretAnterieur(heureDebut,heureFin)
-        if(estAnterieur){
+
+        let estAnterieur = outilHelper.heuretAnterieur(heureDebut, heureFin)
+        if (estAnterieur) {
             res.status(400).json({ message: "heureFin est Anterieur  à  heureDebut" });
             return false;
         }
@@ -43,8 +43,8 @@ const controlInput = async (req, res) => {
             return false;
         }
 
-            estAnterieur =outilHelper.heuretAnterieur(pauseDebut,pauseFin)
-        if(estAnterieur){
+        estAnterieur = outilHelper.heuretAnterieur(pauseDebut, pauseFin)
+        if (estAnterieur) {
             res.status(400).json({ message: "pauseFin est Anterieur  à  pauseDebut" });
             return false;
         }
@@ -58,14 +58,14 @@ const controlInput = async (req, res) => {
 
 exports.create = async (req, res) => {
     try {
-        let { idEmploye, heureDebut,heureFin,pauseDebut,pauseFin } = req.body;
+        let { idEmploye, heureDebut, heureFin, pauseDebut, pauseFin } = req.body;
 
         const validateInput = await controlInput(req, res);
         if (validateInput !== true) {
             return;
         }
 
-        let data = { idEmploye, heureDebut,heureFin,pauseDebut,pauseFin };
+        let data = { idEmploye, heureDebut, heureFin, pauseDebut, pauseFin };
         let result = await horaireService.create(data);
         res.status(200).json({ message: "Success", result });
     } catch (error) {
@@ -87,7 +87,18 @@ exports.findAll = async (req, res) => {
 exports.checkHoraire = async (req, res) => {
     try {
         let { heureClient } = req.query;
-        let list = await horaireService.checkHoraire(null,heureClient);
+        let list = await horaireService.checkHoraire(null, heureClient);
+        res.status(200).json({ size: list.length, resultat: list });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
+
+exports.dispoUser = async (req, res) => {
+    try {
+        let { debutService, finService } = req.query;
+        let list = await horaireService.checkHoraireDispoUser(null, debutService, finService);
         res.status(200).json({ size: list.length, resultat: list });
     } catch (error) {
         console.log(error);
@@ -114,14 +125,14 @@ exports.update = async (req, res) => {
     try {
         let id = req.params.id;
         let idUser = '65bf662353006be666fda322';
-        let { heureDebut,heureFin,pauseDebut,pauseFin } = req.body;
-        req.bodyidEmploye=idUser;
+        let { heureDebut, heureFin, pauseDebut, pauseFin } = req.body;
+        req.bodyidEmploye = idUser;
         const validateInput = await controlInput(req, res);
         if (validateInput !== true) {
             return;
         }
 
-        let data = {heureDebut,heureFin,pauseDebut,pauseFin };
+        let data = { heureDebut, heureFin, pauseDebut, pauseFin };
 
         let list = await horaireService.update(id, data);
         res.status(200).json({ resultat: list });

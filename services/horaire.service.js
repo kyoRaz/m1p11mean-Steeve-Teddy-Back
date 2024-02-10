@@ -86,7 +86,6 @@ const checkHoraire = async (idUser, heureClient) => {
                 ]
             }
 
-
         }
 
         if (idUser) {
@@ -104,11 +103,74 @@ const checkHoraire = async (idUser, heureClient) => {
 }
 
 
+const checkHoraireDispoUser = async (idUser, debutService, finService) => {
+    try {
+
+        let query = {};
+
+        query.$and = [
+
+            {
+                $or: [
+                    {
+                        $and: [
+                            {
+                                heureDebut: { $exists: true, $lte: debutService }
+                            },
+                            { pauseDebut: { $exists: true, $gt: debutService } },
+                        ]
+                    },
+                    {
+                        $and: [
+                            { pauseFin: { $exists: true, $lte: debutService } },
+                            { heureFin: { $exists: true, $gt: debutService } },
+                        ]
+                    }
+                ]
+            },
+            {
+                $or: [
+                    {
+                        $and: [
+                            {
+                                heureDebut: { $exists: true, $lte: finService }
+                            },
+                            { pauseDebut: { $exists: true, $gt: finService } },
+                        ]
+                    },
+                    {
+                        $and: [
+                            { pauseFin: { $exists: true, $lte: finService } },
+                            { heureFin: { $exists: true, $gt: finService } },
+                        ]
+                    }
+                ]
+            }
+
+        ]
+
+        if (idUser) {
+            query.idUser = idUser;
+        }
+
+        let list = await Horaire.find(query).populate({
+            path: 'idEmploye',
+            select: '_id nom prenom',
+        }).sort({ heure: 1 });
+        return list;
+    } catch (error) {
+        throw error;
+    }
+}
+
+
+
 module.exports = {
     create,
     find,
     findById,
     update,
     deleteById,
-    checkHoraire
+    checkHoraire,
+    checkHoraireDispoUser
 }

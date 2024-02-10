@@ -27,15 +27,19 @@ let route = '/horaires';
  *                 description: Identifiant de l'employé
  *               heureDebut:
  *                 type: string
+ *                 example: "09:00:00"
  *                 description: Heure de début de l'horaire
  *               heureFin:
  *                 type: string
+ *                 example: "09:00:00"
  *                 description: Heure de fin de l'horaire
  *               pauseDebut:
  *                 type: string
+ *                 example: "09:00:00"
  *                 description: Heure de début de la pause
  *               pauseFin:
  *                 type: string
+ *                 example: "09:00:00"
  *                 description: Heure de fin de la pause
  *     responses:
  *       200:
@@ -69,6 +73,7 @@ router.get(`${route}`, ctrl.findAll);
  *         description: Taille et résultat de la vérification
  */
 router.get(`${route}/check`, ctrl.checkHoraire);
+router.get(`${route}/dispoUser`, ctrl.dispoUser);
 /**
  * @swagger
  * /api/beauty/horaires/{id}:
@@ -109,12 +114,16 @@ router.get(`${route}/:id`, ctrl.findOne);
  *             properties:
  *               heureDebut:
  *                 type: string
+ *                 example: "09:00:00"
  *               heureFin:
  *                 type: string
+ *                 example: "09:00:00"
  *               pauseDebut:
  *                 type: string
+ *                 example: "09:00:00"
  *               pauseFin:
  *                 type: string
+ *                 example: "09:00:00"
  *     responses:
  *       200:
  *         description: L'horaire mis à jour
@@ -137,6 +146,9 @@ router.put(`${route}/:id`, ctrl.update);
  *         description: Message de confirmation de suppression
  */
 router.delete(`${route}/:id`, ctrl.delete);
+
+
+
 
 
 module.exports = router;
