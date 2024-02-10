@@ -10,7 +10,7 @@ let route = '/rdvDetails';
  * /api/beauty/rdvDetails:
  *   post:
  *     summary: Crée un détail de rendez-vous
- *     description: Ajoute un détail pour un rendez-vous existant.
+ *     description: Ajoute un détail pour un rendez-vous existant avec les informations spécifiques fournies.
  *     requestBody:
  *       required: true
  *       content:
@@ -20,19 +20,26 @@ let route = '/rdvDetails';
  *             properties:
  *               idRdv:
  *                 type: string
- *                 description: Identifiant du rendez-vous
+ *                 description: Identifiant du rendez-vous associé
  *               idService:
  *                 type: string
- *                 description: Identifiant du service
+ *                 description: Identifiant du service fourni lors du rendez-vous
  *               idEmploye:
  *                 type: string
- *                 description: Identifiant de l'employé
- *               heure:
+ *                 description: Identifiant de l'employé assigné au service
+ *               debutService:
  *                 type: string
- *                 description: Heure prévue pour le service
+ *                 format: date-time
+ *                 description: Heure de début du service (format HH:mm:ss)
+ *               finService:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Heure de fin du service (format HH:mm:ss)
  *     responses:
  *       200:
  *         description: Détail de rendez-vous créé avec succès
+ *       400:
+ *         description: Données fournies invalides ou incomplètes
  */
 router.post(`${route}`, ctrl.create);
 

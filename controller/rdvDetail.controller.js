@@ -7,7 +7,7 @@ const outilHelper = require('../helpers/outil');
 
 const controlInput = async (req, res) => {
     try {
-        let { idRdv, idService, idEmploye, heure } = req.body;
+        let { idRdv, idService, idEmploye, debutService, finService } = req.body;
 
         let rdv;
         if (!idRdv || idRdv == "") {
@@ -42,11 +42,19 @@ const controlInput = async (req, res) => {
             }
         }
 
-        if (!heure || !outilHelper.valideFormatHeure(heure)) {
-            console.log("🚀 ~ controlInput ~ heure:", heure)
-            res.status(400).json({ message: "Heure invalide ou vide. Le format attendu est HH:mm:ss." });
+        if (!debutService || !outilHelper.valideFormatHeure(debutService)) {
+            console.log("🚀 ~ controlInput ~ debutService:", debutService)
+            res.status(400).json({ message: "debutService invalide ou vide. Le format attendu est HH:mm:ss." });
             return false;
         }
+
+        if (!finService || !outilHelper.valideFormatHeure(finService)) {
+            console.log("🚀 ~ controlInput ~ finService:", finService)
+            res.status(400).json({ message: "finService invalide ou vide. Le format attendu est HH:mm:ss." });
+            return false;
+        }
+
+
 
         return true;
     } catch (error) {
@@ -56,7 +64,7 @@ const controlInput = async (req, res) => {
 
 exports.create = async (req, res) => {
     try {
-        let { idRdv, idService, idEmploye, heure } = req.body;
+        let { idRdv, idService, idEmploye, debutService, finService } = req.body;
 
         const validateInput = await controlInput(req, res);
         if (validateInput !== true) {
@@ -64,14 +72,14 @@ exports.create = async (req, res) => {
         }
 
         let rdv = await rdvService.findById(idRdv);
-        let dateRdv = rdv.dateRdv;
-        let horaireService = outilHelper.ajusterHeureDate(dateRdv, heure);
+        // let dateRdv = rdv.dateRdv;
+        // let horaireService = outilHelper.ajusterHeureDate(dateRdv, heure);
         let data = {
             idRdv,
             idService,
             idEmploye,
-            horaireService,
-            heure,
+            debutService,
+            finService,
             statusService: "Nouveau"
         }
 
