@@ -29,6 +29,55 @@ let route = '/rdvs';
  *         description: Requête invalide, informations manquantes ou incorrectes.
  */
 router.post(`${route}`, ctrl.create);
+
+/**
+ * @swagger
+ * /api/beauty/rdvs/config:
+ *   post:
+ *     summary: Configure un rendez-vous
+ *     description: Permet de configurer les détails d'un rendez-vous en spécifiant les services et les employés.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               dateRdv:
+ *                 type: string
+ *                 format: date
+ *                 description: La date et l'heure du rendez-vous.
+ *               heureRdv:
+ *                 type: string
+ *                 example: "09:00:00"
+ *                 description: L'heure du rendez-vous au format HH:mm:ss.
+ *               listDetails:
+ *                 type: array
+ *                 description: Liste des détails du service pour le rendez-vous.
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     idService:
+ *                       type: string
+ *                       description: Identifiant du service.
+ *                     idEmploye:
+ *                       type: string
+ *                       description: Identifiant de l'employé assigné au service.
+ *                     debutService:
+ *                       type: string
+ *                       example: "09:00:00"
+ *                       description: Heure de début du service.
+ *                     finService:
+ *                       type: string
+ *                       example: "09:00:00"
+ *                       description: Heure de fin du service.
+ *     responses:
+ *       200:
+ *         description: Rendez-vous configuré avec succès.
+ *       400:
+ *         description: Données fournies invalides ou incomplètes.
+ */
+router.post(`${route}/config`, ctrl.programmerRdv);
 /**
  * @swagger
  * /api/beauty/rdvs:

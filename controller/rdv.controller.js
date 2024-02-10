@@ -1,10 +1,11 @@
 const rdvService = require('../services/rdv.service');
 const outilHelper = require('../helpers/outil');
 
+
 exports.create = async (req, res) => {
     try {
         let idUser = '65bf4a4ababc23a0ac0ce336';
-        let { dateRdv } = req.body;
+        let { dateRdv, heureRdv } = req.body;
 
         const now = new Date();
         now.setHours(0, 0, 0, 0);
@@ -20,14 +21,62 @@ exports.create = async (req, res) => {
             }
         }
 
+
+        if (!heureRdv || !outilHelper.valideFormatHeure(heureRdv)) {
+            console.log("🚀 ~ controlInput ~ heureRdv:", heureRdv)
+            return res.status(400).json({ message: "heureRdv invalide ou vide. Le format attendu est HH:mm:ss." });
+        }
+
+
         let data = {
             idUser,
             dateCreation: new Date(),
-            dateRdv
+            dateRdv,
+            heureRdv
         }
 
         let result = await rdvService.create(data);
         return res.status(200).json({ message: "Success", result });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
+
+exports.programmerRdv = async (req, res) => {
+    try {
+        let idUser = '65bf4a4ababc23a0ac0ce336';
+        let { dateRdv, heureRdv, listDetails } = req.body;
+
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+
+        if (!dateRdv || !Date.parse(dateRdv)) {
+            return res.status(400).json({ message: "dateRdv est requis et doit être au format DateTime valide." });
+        } else {
+            const inputDate = new Date(dateRdv);
+            inputDate.setHours(0, 0, 0, 0);
+
+            if (inputDate < now) {
+                return res.status(400).json({ message: "dateRdv ne doit pas être une date antérieure à aujourd'hui." });
+            }
+        }
+
+        if (!heureRdv || !outilHelper.valideFormatHeure(heureRdv)) {
+            console.log("🚀 ~ controlInput ~ heureRdv:", heureRdv)
+            return res.status(400).json({ message: "heureRdv invalide ou vide. Le format attendu est HH:mm:ss." });
+        }
+
+        let data = {
+            idUser,
+            dateCreation: new Date(),
+            dateRdv,
+            heureRdv
+        }
+
+        await rdvService.createRdvandDetail(data, listDetails);
+
+        return res.status(200).json({ message: "Success" });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Error Server" });
@@ -72,10 +121,10 @@ exports.findOne = async (req, res) => {
     try {
         let id = req.params.id;
         let result = await rdvService.findById(id);
-        if(result){
+        if (result) {
             res.status(200).json({ result });
-        }else{
-            res.status(404).json({ message :"Entité  introuvable " });
+        } else {
+            res.status(404).json({ message: "Entité  introuvable " });
         }
     } catch (error) {
         console.log(error);
@@ -86,8 +135,7 @@ exports.findOne = async (req, res) => {
 exports.update = async (req, res) => {
     try {
         let id = req.params.id;
-        let { dateRdv } = req.body;
-
+        let { dateRdv, heureRdv } = req.body;
 
         let rdv = await rdvService.findById(id);
         if (!rdv) {
@@ -108,8 +156,16 @@ exports.update = async (req, res) => {
             }
         }
 
+
+        if (!heureRdv || !outilHelper.valideFormatHeure(heureRdv)) {
+            console.log("🚀 ~ controlInput ~ heureRdv:", heureRdv)
+            return res.status(400).json({ message: "heureRdv invalide ou vide. Le format attendu est HH:mm:ss." });
+        }
+
+
         let data = {
-            dateRdv
+            dateRdv,
+            heureRdv
         }
 
         let list = await rdvService.update(id, data);

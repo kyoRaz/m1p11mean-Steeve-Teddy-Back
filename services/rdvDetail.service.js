@@ -11,6 +11,24 @@ const create = async (data) => {
     }
 }
 
+const createDetail = async (idRdv, detail, session) => {
+    try {
+        let data = {
+            idRdv,
+            idService: detail.idService,
+            idEmploye: detail.idEmploye,
+            debutService: detail.debutService,
+            finService: detail.finService,
+            statusService: "Nouveau"
+        }
+        let rdv = new RdvDetail(data);
+        const newObject = await rdv.save({ session });
+        return newObject;
+    } catch (error) {
+        throw error;
+    }
+}
+
 const find = async () => {
     try {
         let list = await RdvDetail.find().populate({
@@ -83,6 +101,7 @@ const findByIntervale = async (heureDebut, heureFin) => {
 
 module.exports = {
     create,
+    createDetail,
     find,
     findById,
     update,
