@@ -89,13 +89,103 @@ const checkHoraire = async (idUser, heureClient) => {
         }
 
         if (idUser) {
-            query.idUser = idUser;
+            query.idEmploye = idUser;
         }
 
         let list = await Horaire.find(query).populate({
             path: 'idEmploye',
             select: '_id nom prenom',
         }).sort({ heure: 1 });
+        return list;
+    } catch (error) {
+        throw error;
+    }
+}
+
+const checkHoraireDispoUserWithNoService = async (idUser, debutServiceTarget, finServiceTarget,date) => {
+    try {
+        let list = []
+        list = await Horaire.aggregate([
+            {
+                $match: {
+                    $or: [
+                        {
+                            $and: [
+                                {
+                                    heureDebut: { $exists: true, $lte: debutServiceTarget }
+                                },
+                                { pauseDebut: { $exists: true, $gte: finServiceTarget } },
+                            ]
+                        },
+                        {
+                            $and: [
+                                { pauseFin: { $exists: true, $lte: debutServiceTarget} },
+                                { heureFin: { $exists: true, $gte: finServiceTarget } },
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                $lookup: {
+                    from: "rdvdetails",
+                    localField: "idEmploye",
+                    foreignField: "idEmploye",
+                    as: "rdvdetails"
+                }
+            },
+            {
+                $lookup: {
+                    from: "rdvs",
+                    localField: "rdvdetails.idRdv",
+                    foreignField: "rdvs._id",
+                    as: "rdvs"
+                }
+            },
+            //Filtrer les rendez-vous qui ont la date donnée
+            {
+                $match: {
+                    "rdvs.dateRdv": new Date(date)
+                }
+            },
+            {
+                $match: {
+                    rdvdetails: { 
+                        $not: { 
+                            $elemMatch: {
+                                debutService: { $lt: finServiceTarget },
+                                finService: { $gt: debutServiceTarget }
+                            }
+                        } 
+                    }
+                }
+            },
+            {
+                $lookup: {
+                    from: "utilisateurs",
+                    localField: "idEmploye",
+                    foreignField: "_id",
+                    as: "employee"
+                }
+            },
+            {
+                $unwind: "$employee" 
+            },
+            {
+                $project: {
+                    _id: 0,
+                    idEmploye: {
+                        _id: "$employee._id", 
+                        nom: "$employee.nom", 
+                        prenom: "$employee.prenom", 
+                    },
+                    heureDebut: 1,
+                    heureFin: 1,
+                    pauseDebut: 1,
+                    pauseFin: 1
+                }
+            }
+        ]).exec();
         return list;
     } catch (error) {
         throw error;
@@ -172,5 +262,6 @@ module.exports = {
     update,
     deleteById,
     checkHoraire,
-    checkHoraireDispoUser
+    checkHoraireDispoUser,
+    checkHoraireDispoUserWithNoService
 }

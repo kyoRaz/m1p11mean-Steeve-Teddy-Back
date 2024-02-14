@@ -106,6 +106,17 @@ exports.dispoUser = async (req, res) => {
     }
 }
 
+exports.dispoUserWithNoService = async (req, res) => {
+    try {
+        let { debutService, finService, date } = req.query;
+        let list = await horaireService.checkHoraireDispoUserWithNoService(null, debutService, finService,date);
+        res.status(200).json({ size: list.length, resultat: list });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
+
 exports.findOne = async (req, res) => {
     try {
         let id = req.params.id;

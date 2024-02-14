@@ -74,6 +74,7 @@ router.get(`${route}`, ctrl.findAll);
  */
 router.get(`${route}/check`, ctrl.checkHoraire);
 router.get(`${route}/dispoUser`, ctrl.dispoUser);
+router.get(`${route}/dispoUserWithNoService`, ctrl.dispoUserWithNoService);
 /**
  * @swagger
  * /api/beauty/horaires/{id}:
