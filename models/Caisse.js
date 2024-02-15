@@ -10,16 +10,6 @@ const schema = new Schema({
         type: String,
         required: false
     },
-    idType: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'typeTransaction',
-        required: true
-    },
-    idrdvdetail: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'rdvDetail',
-        required: false
-    },
     entree: {
         type: Number,
         default: 0
