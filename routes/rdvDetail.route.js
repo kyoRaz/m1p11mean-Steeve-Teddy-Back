@@ -29,11 +29,11 @@ let route = '/rdvDetails';
  *                 description: Identifiant de l'employé assigné au service
  *               debutService:
  *                 type: string
- *                 format: date-time
+ *                 format: date
  *                 description: Heure de début du service (format HH:mm:ss)
  *               finService:
  *                 type: string
- *                 format: date-time
+ *                 format: date
  *                 description: Heure de fin du service (format HH:mm:ss)
  *     responses:
  *       200:
@@ -66,14 +66,14 @@ router.get(`${route}`, ctrl.findAll);
  *         required: true
  *         schema:
  *           type: string
- *           format: date-time
+ *           format: date
  *         description: La date de début de l'intervalle
  *       - in: query
  *         name: dateFin
  *         required: true
  *         schema:
  *           type: string
- *           format: date-time
+ *           format: date
  *         description: La date de fin de l'intervalle
  *     responses:
  *       200:
