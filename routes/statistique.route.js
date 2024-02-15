@@ -6,5 +6,6 @@ let route = '/statistiques';
 
 router.get(`${route}/nombreReservationParMois`, ctrl.nombreReservationParMois);
 router.get(`${route}/nombreReservationParJour`, ctrl.nombreReservationParJour);
+router.get(`${route}/beneficeParMoisIncluantDepense`, ctrl.beneficeParMoisIncluantDepense);
 
 module.exports = router

@@ -31,3 +31,15 @@ exports.nombreReservationParMois = async (req, res) => {
         res.status(500).json({ message: "Error Server" });
     }
 }
+
+
+exports.beneficeParMoisIncluantDepense = async (req, res) => {
+    try{
+        const {annee} = req.query;
+        let liste = await statistiqueService.beneficeParMoisIncluantDepense(annee);
+        res.status(200).json({ size: liste.length, resultat: liste });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
