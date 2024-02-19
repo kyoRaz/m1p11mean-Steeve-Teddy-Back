@@ -7,7 +7,7 @@ exports.auth = async (req, res) => {
         const { email, password } = req.body;
 
         if (!email || email == "") {
-            res.status(400).json({
+            return res.status(400).json({
                 message: "Bad Request",
                 details: {
                     field: "email",
@@ -17,7 +17,7 @@ exports.auth = async (req, res) => {
         }
 
         if (!password || password == "") {
-            res.status(400).json({
+            return res.status(400).json({
                 message: "Bad Request",
                 details: {
                     field: "email",
