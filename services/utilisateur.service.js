@@ -252,6 +252,20 @@ const findAndFilter = async (filter, orderBy, page, limit) => {
 };
 
 
+const desactivateUser = async (id) => {
+  try {
+    let update = {
+      $set: {
+        estActif: false
+      }
+    }
+    let user = await Utilisateur.findByIdAndUpdate(id, update, { new: true });
+    return user;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   inscriptionClient,
   findAll,
@@ -267,5 +281,6 @@ module.exports = {
   finbById,
   findEmp,
   findAndFilterEmp,
-  findAndFilterByRole
+  findAndFilterByRole,
+  desactivateUser
 };

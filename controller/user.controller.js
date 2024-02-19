@@ -48,6 +48,17 @@ const controlPassword = (req, res) => {
     return true;
 }
 
+exports.desactiveUser = async (req, res) => {
+    try {
+        let id = req.params.id;
+        await utilisateurService.desactivateUser(id);
+        return res.status(200).json({ message: "Success" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
+
 
 exports.signUp = async (req, res) => {
     try {
