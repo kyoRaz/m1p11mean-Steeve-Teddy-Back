@@ -51,7 +51,7 @@ const controlPassword = (req, res) => {
 
 exports.signUp = async (req, res) => {
     try {
-        const { nom, prenom, email, password, roleId } = req.body;
+        const { nom, prenom, email, password } = req.body;
         // Control des  inputs
         const validationResult = controlBody(req, res);
         if (validationResult !== true) {
@@ -61,12 +61,12 @@ exports.signUp = async (req, res) => {
         if (palidPassword !== true) {
             return;
         }
+
         let data = {
             nom,
             prenom,
             email,
             password,
-            roleId
         };
         const nouvelUtilisateur = await utilisateurService.inscriptionClient(data);
         return res.status(200).json(nouvelUtilisateur);

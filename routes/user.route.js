@@ -36,9 +36,9 @@ router.get(`${route}`, ctrl.findAll);
 
 /**
  * @swagger
- * /api/beauty/users:
+ * /api/beauty/users/client:
  *   post:
- *     summary: Crée un nouvel utilisateur
+ *     summary: Crée un nouveau client
  *     description: Ajoute un nouvel utilisateur avec les informations fournies.
  *     requestBody:
  *       required: true
@@ -47,6 +47,12 @@ router.get(`${route}`, ctrl.findAll);
  *           schema:
  *             type: object
  *             properties:
+ *               nom:
+ *                 type: string
+ *                 description: nom de l'utilisateur
+ *               prenom:
+ *                 type: string
+ *                 description: prenom de l'utilisateur
  *               email:
  *                 type: string
  *                 description: Email de l'utilisateur
@@ -57,7 +63,7 @@ router.get(`${route}`, ctrl.findAll);
  *       200:
  *         description: Utilisateur créé avec succès
  */
-router.post(`${route}`, ctrl.signUp);
+router.post(`${route}/client`, ctrl.signUp);
 
 /**
  * @swagger
