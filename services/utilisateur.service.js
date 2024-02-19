@@ -186,8 +186,23 @@ const getListEmploye = async () => {
 
 const findAndFilterEmp = async (filter, orderBy, page, limit) => {
   try {
-    filter ? null : filter ={};
-    filter.roleId= process.env.ROLE_EMPLOYE;
+    filter ? null : filter = {};
+    filter.roleId = process.env.ROLE_EMPLOYE;
+    let list = await findAndFilter(filter, orderBy, page, limit);
+    return list;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const findAndFilterByRole = async (filter, orderBy, page, limit, role) => {
+  try {
+    filter ? null : filter = {};
+
+    if (role) {
+      role == "client" ? filter.roleId = process.env.ROLE_CLIENT : filter.roleId = process.env.ROLE_EMPLOYE;
+    }
+
     let list = await findAndFilter(filter, orderBy, page, limit);
     return list;
   } catch (error) {
@@ -220,6 +235,7 @@ const findAndFilter = async (filter, orderBy, page, limit) => {
       .sort(sort)
       .skip(skip)
       .limit(parseInt(limit))
+      .populate('roleId').select('_id libelle')
       .exec();
 
 
@@ -250,5 +266,6 @@ module.exports = {
   findAndFilter,
   finbById,
   findEmp,
-  findAndFilterEmp
+  findAndFilterEmp,
+  findAndFilterByRole
 };
