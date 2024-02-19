@@ -216,6 +216,7 @@ const findAndFilter = async (filter, orderBy, page, limit) => {
 
     const query = {};
 
+    filter.removed = false;
     if (filter) {
       Object.assign(query, filter);
     }
@@ -256,7 +257,7 @@ const desactivateUser = async (id) => {
   try {
     let update = {
       $set: {
-        estActif: false
+        removed: true
       }
     }
     let user = await Utilisateur.findByIdAndUpdate(id, update, { new: true });

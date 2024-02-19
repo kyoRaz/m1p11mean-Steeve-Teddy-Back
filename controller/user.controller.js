@@ -187,6 +187,7 @@ exports.findAll = async (req, res) => {
             limit = 10;
         }
 
+
         let result = await utilisateurService.findAndFilter(filter, null, page, limit);
 
         return res.status(200).json(result);
