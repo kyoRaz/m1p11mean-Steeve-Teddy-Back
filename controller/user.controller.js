@@ -48,6 +48,17 @@ const controlPassword = (req, res) => {
     return true;
 }
 
+exports.desactiveUser = async (req, res) => {
+    try {
+        let id = req.params.id;
+        await utilisateurService.desactivateUser(id);
+        return res.status(200).json({ message: "Success" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
+
 
 exports.signUp = async (req, res) => {
     try {
@@ -164,19 +175,20 @@ exports.listEmploye = async (req, res) => {
 }
 
 exports.findAll = async (req, res) => {
-    
+
     try {
         let { page, limit, filter } = req.query;
-    
+
         if (!page || isNaN(page) || page < 1) {
             page = 1;
         }
-    
+
         if (!limit || isNaN(limit) || limit < 1) {
             limit = 10;
         }
-    
-        let result =  await  utilisateurService.findAndFilter(filter, null, page, limit);
+
+
+        let result = await utilisateurService.findAndFilter(filter, null, page, limit);
 
         return res.status(200).json(result);
     } catch (error) {
@@ -186,19 +198,19 @@ exports.findAll = async (req, res) => {
 }
 
 exports.findAllEmp = async (req, res) => {
-    
+
     try {
         let { page, limit, filter } = req.query;
-    
+
         if (!page || isNaN(page) || page < 1) {
             page = 1;
         }
-    
+
         if (!limit || isNaN(limit) || limit < 1) {
             limit = 10;
         }
-    
-        let result =  await  utilisateurService.findAndFilterEmp(filter, null, page, limit);
+
+        let result = await utilisateurService.findAndFilterByRole(filter, null, page, limit, "employe");
 
         return res.status(200).json(result);
     } catch (error) {

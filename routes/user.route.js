@@ -165,4 +165,27 @@ router.post(`${route}/pwsd`, ctrl.activeAndPasswd);
  */
 router.get(`${route}/employes`, ctrl.findAllEmp);
 
+/**
+ * @swagger
+ * /api/beauty/users/{id}:
+ *   delete:
+ *     summary: desactive User
+ *     description: desactive User
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: user a desactiver
+ *     responses:
+ *       200:
+ *         description: Rôle mis à jour avec succès
+ *       400:
+ *         description: Requête invalide, rôle vide
+ *       500:
+ *         description: Erreur interne du serveur
+ */
+router.delete(`${route}/:id`, ctrl.desactiveUser);
+
 module.exports = router;

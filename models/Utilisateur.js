@@ -8,6 +8,7 @@ const utilisateurSchema = new Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: false },
   estActif: { type: Boolean, default: false },
+  removed: { type: Boolean, default: false },
   tokenActivation: { type: String },
   expirationToken: { type: Date }
 });
