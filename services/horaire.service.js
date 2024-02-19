@@ -254,7 +254,6 @@ const checkHoraireDispoUser = async (idUser, debutService, finService) => {
 }
 
 
-
 module.exports = {
     create,
     find,

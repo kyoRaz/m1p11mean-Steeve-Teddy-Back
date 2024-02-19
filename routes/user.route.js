@@ -103,7 +103,7 @@ router.post(`${route}/employe`, ctrl.createEmploye);
  *           schema:
  *             type: object
  *             properties:
- *               codeActivation:
+ *               token:
  *                 type: string
  *                 description: Code d'activation pour l'utilisateur
  *     responses:
@@ -125,9 +125,9 @@ router.post(`${route}/activation`, ctrl.activationUser);
  *           schema:
  *             type: object
  *             properties:
- *               email:
+ *               id:
  *                 type: string
- *                 description: Email de l'utilisateur pour réinitialisation
+ *                 description: id de l'utilisateur pour réinitialisation
  *               newPassword:
  *                 type: string
  *                 description: Nouveau mot de passe
