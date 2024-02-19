@@ -184,6 +184,17 @@ const getListEmploye = async () => {
   }
 }
 
+const findAndFilterEmp = async (filter, orderBy, page, limit) => {
+  try {
+    filter ? null : filter ={};
+    filter.roleId= process.env.ROLE_EMPLOYE;
+    let list = await findAndFilter(filter, orderBy, page, limit);
+    return list;
+  } catch (error) {
+    throw error;
+  }
+}
+
 const findAndFilter = async (filter, orderBy, page, limit) => {
   try {
     const skip = (page - 1) * limit;
@@ -238,5 +249,6 @@ module.exports = {
   getListEmploye,
   findAndFilter,
   finbById,
-  findEmp
+  findEmp,
+  findAndFilterEmp
 };

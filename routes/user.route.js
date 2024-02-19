@@ -143,9 +143,26 @@ router.post(`${route}/pwsd`, ctrl.activeAndPasswd);
  *   get:
  *     summary: Liste tous les employés
  *     description: Récupère une liste de tous les employés enregistrés.
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Numéro de la page pour la pagination (commence à 0)
+ *       - in: query
+ *         name: size
+ *         schema:
+ *           type: integer
+ *         description: Nombre d'utilisateurs par page
+ *       - in: query
+ *         name: filter
+ *         schema:
+ *           type: string
+ *         description: Terme de filtrage appliqué aux utilisateurs
  *     responses:
  *       200:
- *         description: Liste des employés récupérée avec succès
+ *         description: Liste paginée des utilisateurs récupérée avec succès
  */
-router.get(`${route}/employes`, ctrl.listEmploye);
+router.get(`${route}/employes`, ctrl.findAllEmp);
+
 module.exports = router;
