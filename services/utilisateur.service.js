@@ -100,9 +100,9 @@ const findEmp = async (id) => {
     let user = await Utilisateur.findById(id).populate('roleId');
     let idRole = process.env.ROLE_EMPLOYE;
     if (user && user.roleId && user.roleId._id.toString() === idRole) {
-      return user; 
+      return user;
     } else {
-      return null; 
+      return null;
     }
   } catch (error) {
     throw error;
@@ -177,7 +177,7 @@ const getListEmploye = async () => {
   try {
     let list = await Utilisateur.find({
       roleId: process.env.ROLE_EMPLOYE
-    }).populate('roleId');
+    }).populate('roleId').select('_id nom prenom email estActif');
     return list;
   } catch (error) {
     throw error;
@@ -205,6 +205,7 @@ const findAndFilter = async (filter, orderBy, page, limit) => {
     const totalPages = Math.ceil(totalDocuments / parseInt(limit));
 
     const users = await Utilisateur.find(query)
+      .select('-password -tokenActivation -expirationToken')
       .sort(sort)
       .skip(skip)
       .limit(parseInt(limit))

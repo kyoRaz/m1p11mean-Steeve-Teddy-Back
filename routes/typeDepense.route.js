@@ -1,16 +1,16 @@
 var express = require('express');
 var router = express.Router();
-const ctrl = require('../controller/role.controller');
+const ctrl = require('../controller/typeDepense.controller');
 
 
-let route = '/roles';
+let route = '/typeDepenses';
 
 /**
  * @swagger
  * /api/beauty/roles:
  *   post:
- *     summary: Crée un nouveau rôle
- *     description: Ajoute un nouveau rôle dans le système.
+ *     summary: Crée un nouveau type de dépense
+ *     description: Ajoute un nouveau type de dépense dans le système.
  *     requestBody:
  *       required: true
  *       content:
@@ -18,14 +18,14 @@ let route = '/roles';
  *           schema:
  *             type: object
  *             properties:
- *               role:
+ *               typeDepense:
  *                 type: string
- *                 description: Nom du rôle à créer
+ *                 description: Libelle du type de dépense à créer
  *     responses:
  *       200:
- *         description: Rôle créé avec succès
+ *         description: Type de dépense créé avec succès
  *       400:
- *         description: Requête invalide, rôle vide
+ *         description: Requête invalide, type de dépense vide
  *       500:
  *         description: Erreur interne du serveur
  */
@@ -33,13 +33,13 @@ router.post(`${route}`, ctrl.create);
 
 /**
  * @swagger
- * /api/beauty/roles:
+ * /api/beauty/typeDepenses:
  *   get:
- *     summary: Liste tous les rôles
- *     description: Récupère une liste de tous les rôles disponibles.
+ *     summary: Liste tous les types de dépense
+ *     description: Récupère une liste de tous les types de dépense disponibles.
  *     responses:
  *       200:
- *         description: Liste des rôles récupérée avec succès
+ *         description: Liste des types de dépense récupérées avec succès
  *       500:
  *         description: Erreur interne du serveur
  */
@@ -47,17 +47,17 @@ router.get(`${route}`, ctrl.findAll);
 
 /**
  * @swagger
- * /api/beauty/roles/{id}:
+ * /api/beauty/typeDepenses/{id}:
  *   put:
- *     summary: Met à jour un rôle spécifique
- *     description: Met à jour le nom d'un rôle existant par son ID.
+ *     summary: Met à jour un type de dépense spécifique
+ *     description: Met à jour le nom d'un type de dépense existant par son ID.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: L'ID du rôle à mettre à jour
+ *         description: L'ID du type de dépense à mettre à jour
  *     requestBody:
  *       required: true
  *       content:
@@ -65,14 +65,14 @@ router.get(`${route}`, ctrl.findAll);
  *           schema:
  *             type: object
  *             properties:
- *               role:
+ *               typeDepense:
  *                 type: string
- *                 description: Nouveau nom du rôle
+ *                 description: Nouveau nom du type de dépense
  *     responses:
  *       200:
- *         description: Rôle mis à jour avec succès
+ *         description: Type de dépense mis à jour avec succès
  *       400:
- *         description: Requête invalide, rôle vide
+ *         description: Requête invalide, type de dépense vide
  *       500:
  *         description: Erreur interne du serveur
  */
@@ -80,20 +80,20 @@ router.put(`${route}/:id`, ctrl.update);
 
 /**
  * @swagger
- * /api/beauty/roles/{id}:
+ * /api/beauty/typeDepenses/{id}:
  *   delete:
- *     summary: Supprime un rôle par son ID
- *     description: Supprime un rôle existant du système.
+ *     summary: Supprime un type de dépense par son ID
+ *     description: Supprime un type de dépense existant du système.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: L'ID du rôle à supprimer
+ *         description: L'ID du type de dépense à supprimer
  *     responses:
  *       200:
- *         description: Rôle supprimé avec succès
+ *         description: Type de dépense supprimé avec succès
  *       500:
  *         description: Erreur interne du serveur
  */

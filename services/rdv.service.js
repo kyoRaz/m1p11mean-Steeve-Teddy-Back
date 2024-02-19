@@ -1,10 +1,21 @@
 const Rdv = require('../models/Rdv');
-
+const { startSession } = require('mongoose');
+const rdvDetailService = require('./rdvDetail.service');
 
 const create = async (data) => {
     try {
         let rdv = new Rdv(data);
         const newObject = await rdv.save();
+        return newObject;
+    } catch (error) {
+        throw error;
+    }
+}
+
+const createWithTransaction = async (data, session) => {
+    try {
+        let rdv = new Rdv(data);
+        const newObject = await rdv.save({ session });
         return newObject;
     } catch (error) {
         throw error;
@@ -114,10 +125,36 @@ const deleteById = async (id) => {
 }
 
 
+const createRdvandDetail = async (data, listDetails) => {
+    const session = await startSession();
+    session.startTransaction();
+    try {
+        let rdv = await createWithTransaction(data, session);
+
+        let listIdService = [];
+        for (let detail of listDetails) {
+            if (listIdService.includes(detail.idService)) {
+                throw new Error('idService already exists in the listIdService');
+            }
+            await rdvDetailService.createDetail(rdv._id, detail, session);
+            listIdService.push(detail.idService);
+        }
+        await session.commitTransaction();
+    } catch (error) {
+        await session.abortTransaction();
+        throw error;
+    } finally {
+        session.endSession();
+    }
+}
+
+
 module.exports = {
     create,
+    createWithTransaction,
     find,
     findById,
     update,
-    deleteById
+    deleteById,
+    createRdvandDetail
 }

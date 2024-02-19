@@ -1,5 +1,5 @@
 const serviceService = require('../services/service.service');
-
+const outilHelper = require('../helpers/outil');
 
 const controlInput = (req, res) => {
     const { nom, delai, prix, commission } = req.body;
@@ -9,8 +9,9 @@ const controlInput = (req, res) => {
         return false;
     }
 
-    if (!delai || isNaN(delai) || delai < 0) {
-        res.status(400).json({ message: 'Bad Request', details: 'Le délai doit être un nombre positif' });
+    if (!delai || !outilHelper.valideFormatHeure(delai)) {
+        console.log("🚀 ~ controlInput ~ delai:", delai)
+        res.status(400).json({ message: "Heure invalide ou vide. Le format attendu est HH:mm:ss." });
         return false;
     }
 
@@ -30,12 +31,12 @@ const controlInput = (req, res) => {
 
 exports.create = async (req, res) => {
     try {
-        let {nom,delai,prix,commission} = req.body;
-        let chackInput =controlInput(req, res);
+        let { nom, delai, prix, commission } = req.body;
+        let chackInput = controlInput(req, res);
         if (chackInput !== true) {
             return;
         }
-        let data ={ nom,delai,prix,commission};
+        let data = { nom, delai, prix, commission };
         let newservice = await serviceService.create(data);
         return res.status(200).json({ message: "Success", service: newservice });
 
@@ -57,13 +58,13 @@ exports.findAll = async (req, res) => {
 
 exports.update = async (req, res) => {
     try {
-        let id = req.params.id ;
-        let {nom,delai,prix,commission} = req.body;
-        let chackInput =controlInput(req, res);
+        let id = req.params.id;
+        let { nom, delai, prix, commission } = req.body;
+        let chackInput = controlInput(req, res);
         if (chackInput !== true) {
             return;
         }
-        let data ={ nom,delai,prix,commission};
+        let data = { nom, delai, prix, commission };
         let list = await serviceService.update(id, data);
         return res.status(200).json({ resultat: list });
     } catch (error) {
