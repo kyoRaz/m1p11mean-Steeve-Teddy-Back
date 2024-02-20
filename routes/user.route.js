@@ -140,7 +140,7 @@ router.post(`${route}/activation`, ctrl.activationUser);
  *       200:
  *         description: Utilisateur modifié avec succès
  */
-router.put(`${route}/:id`, ctrl.update);
+router.put(`${route}/:id`, ctrl.update );
 
 /**
  * @swagger
@@ -155,7 +155,7 @@ router.put(`${route}/:id`, ctrl.update);
  *           schema:
  *             type: object
  *             properties:
- *               id:
+ *               idUser:
  *                 type: string
  *                 description: id de l'utilisateur pour réinitialisation
  *               password:
