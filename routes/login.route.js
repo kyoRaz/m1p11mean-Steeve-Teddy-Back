@@ -19,12 +19,12 @@ let route = '/login';
  *             type: object
  *             required:
  *               - email
- *               - motDePasse
+ *               - password
  *             properties:
  *               email:
  *                 type: string
  *                 description: L'adresse email de l'utilisateur
- *               motDePasse:
+ *               password:
  *                 type: string
  *                 description: Le mot de passe de l'utilisateur
  *     responses:
