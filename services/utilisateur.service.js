@@ -271,6 +271,7 @@ const findAndFilter = async (filter, orderBy, page, limit) => {
 
     const query = {};
 
+    filter ? null : filter = {};
     filter.removed = false;
     if (filter) {
       Object.assign(query, filter);
