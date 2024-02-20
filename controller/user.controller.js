@@ -162,6 +162,32 @@ exports.activeAndPasswd = async (req, res) => {
     }
 }
 
+exports.update = async (req, res) => {
+    try {
+        let id = req.params.id;
+        let {nom,prenom} = req.body;
+
+        if (!nom || nom == "") {
+            return res.status(400).json({ message: 'Bad Request', details: "Le nom ne  doit pas  être pas  vide" });
+
+        }
+        if (!prenom || prenom == "") {
+            return res.status(400).json({ message: 'Bad Request', details: "Le prenom ne  doit pas  être pas  vide" });
+
+        }
+        let  data ={
+            nom,prenom 
+        }
+
+        let list = await utilisateurService.update(id, data );
+        return res.status(200).json({ resultat: list });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
+
+
 exports.listEmploye = async (req, res) => {
     try {
 
