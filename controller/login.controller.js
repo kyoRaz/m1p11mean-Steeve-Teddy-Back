@@ -20,8 +20,8 @@ exports.auth = async (req, res) => {
             return res.status(400).json({
                 message: "Bad Request",
                 details: {
-                    field: "email",
-                    reason: "input email vide "
+                    field: "erreur password",
+                    reason: "input password vide "
                 }
             })
         }
