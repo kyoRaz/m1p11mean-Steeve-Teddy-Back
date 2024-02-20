@@ -161,6 +161,9 @@ router.put(`${route}/:id`, ctrl.update );
  *               password:
  *                 type: string
  *                 description: Nouveau mot de passe
+ *               confirmPWD:
+ *                 type: string
+ *                 description: confirmer mot de passe
  *     responses:
  *       200:
  *         description: Mot de passe réinitialisé et activé avec succès
