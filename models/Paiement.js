@@ -15,7 +15,7 @@ const schema = new Schema({
         ref: 'rdv',
         required: false
     },
-    id: {
+    idModePaiement: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'modePaiement',
         required: false
