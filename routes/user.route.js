@@ -114,6 +114,36 @@ router.post(`${route}/activation`, ctrl.activationUser);
 
 /**
  * @swagger
+ * /api/beauty/users/{id}:
+ *   put:
+ *     summary: update User
+ *     description: updates
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: L'ID de l user à mettre à jour
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nom:
+ *                 type: string
+ *               prenom:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Utilisateur modifié avec succès
+ */
+router.put(`${route}/:id`, ctrl.update);
+
+/**
+ * @swagger
  * /api/beauty/users/pwsd:
  *   post:
  *     summary: Réinitialise et active le mot de passe
@@ -128,7 +158,7 @@ router.post(`${route}/activation`, ctrl.activationUser);
  *               id:
  *                 type: string
  *                 description: id de l'utilisateur pour réinitialisation
- *               newPassword:
+ *               password:
  *                 type: string
  *                 description: Nouveau mot de passe
  *     responses:
