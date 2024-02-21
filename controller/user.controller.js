@@ -165,7 +165,7 @@ exports.activeAndPasswd = async (req, res) => {
 exports.update = async (req, res) => {
     try {
         let id = req.params.id;
-        let {nom,prenom} = req.body;
+        let { nom, prenom } = req.body;
 
         if (!nom || nom == "") {
             return res.status(400).json({ message: 'Bad Request', details: "Le nom ne  doit pas  être pas  vide" });
@@ -175,11 +175,11 @@ exports.update = async (req, res) => {
             return res.status(400).json({ message: 'Bad Request', details: "Le prenom ne  doit pas  être pas  vide" });
 
         }
-        let  data ={
-            nom,prenom 
+        let data = {
+            nom, prenom
         }
 
-        let list = await utilisateurService.update(id, data );
+        let list = await utilisateurService.update(id, data);
         return res.status(200).json({ resultat: list });
     } catch (error) {
         console.log(error);
@@ -248,10 +248,9 @@ exports.findAllEmp = async (req, res) => {
 exports.getOne = async (req, res) => {
 
     try {
-        let id= req.params.id;
+        let id = req.params.id;
 
         let result = await utilisateurService.finbById(id);
-        console.log(result);
         return res.status(200).json(result);
     } catch (error) {
         console.log(error);

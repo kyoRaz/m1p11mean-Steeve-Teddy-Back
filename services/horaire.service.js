@@ -35,6 +35,15 @@ const findById = async (id) => {
     }
 }
 
+const findByIdEmp = async (id) => {
+    try {
+        let result = await Horaire.findOne({ idEmploye: id });
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
+
 const update = async (id, data) => {
     try {
         const update = {
@@ -102,7 +111,7 @@ const checkHoraire = async (idUser, heureClient) => {
     }
 }
 
-const checkHoraireDispoUserWithNoService = async (idUser, debutServiceTarget, finServiceTarget,date) => {
+const checkHoraireDispoUserWithNoService = async (idUser, debutServiceTarget, finServiceTarget, date) => {
     try {
         let list = []
         list = await Horaire.aggregate([
@@ -119,7 +128,7 @@ const checkHoraireDispoUserWithNoService = async (idUser, debutServiceTarget, fi
                         },
                         {
                             $and: [
-                                { pauseFin: { $exists: true, $lte: debutServiceTarget} },
+                                { pauseFin: { $exists: true, $lte: debutServiceTarget } },
                                 { heureFin: { $exists: true, $gte: finServiceTarget } },
                             ]
                         }
@@ -150,13 +159,13 @@ const checkHoraireDispoUserWithNoService = async (idUser, debutServiceTarget, fi
             },
             {
                 $match: {
-                    rdvdetails: { 
-                        $not: { 
+                    rdvdetails: {
+                        $not: {
                             $elemMatch: {
                                 debutService: { $lt: finServiceTarget },
                                 finService: { $gt: debutServiceTarget }
                             }
-                        } 
+                        }
                     }
                 }
             },
@@ -169,15 +178,15 @@ const checkHoraireDispoUserWithNoService = async (idUser, debutServiceTarget, fi
                 }
             },
             {
-                $unwind: "$employee" 
+                $unwind: "$employee"
             },
             {
                 $project: {
                     _id: 0,
                     idEmploye: {
-                        _id: "$employee._id", 
-                        nom: "$employee.nom", 
-                        prenom: "$employee.prenom", 
+                        _id: "$employee._id",
+                        nom: "$employee.nom",
+                        prenom: "$employee.prenom",
                     },
                     heureDebut: 1,
                     heureFin: 1,
@@ -262,5 +271,6 @@ module.exports = {
     deleteById,
     checkHoraire,
     checkHoraireDispoUser,
-    checkHoraireDispoUserWithNoService
+    checkHoraireDispoUserWithNoService,
+    findByIdEmp
 }

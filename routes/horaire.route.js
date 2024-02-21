@@ -77,6 +77,26 @@ router.get(`${route}/dispoUser`, ctrl.dispoUser);
 router.get(`${route}/dispoUserWithNoService`, ctrl.dispoUserWithNoService);
 /**
  * @swagger
+ * /api/beauty/horaires/employe/{id}:
+ *   get:
+ *     summary: Trouve un seul horaire par son IDEmploye
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: L'ID de l'horaire à trouver
+ *     responses:
+ *       200:
+ *         description: L'horaire trouvé
+ *       404:
+ *         description: Horaire non trouvé
+ */
+router.get(`${route}/employe/:id`, ctrl.findByEmp);
+
+/**
+ * @swagger
  * /api/beauty/horaires/{id}:
  *   get:
  *     summary: Trouve un seul horaire par son ID
