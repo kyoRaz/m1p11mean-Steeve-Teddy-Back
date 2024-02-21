@@ -157,6 +157,20 @@ function addTimes(time1, time2) {
     return `${hours}:${minutes}:${seconds}`;
 }
 
+function convertTimeToHHMMSS(timeStr) {
+    const fullTimePattern = /^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9]):([0-5]?[0-9])$/;
+    if (fullTimePattern.test(timeStr)) {
+        return timeStr;
+    }
+
+    const shortTimePattern = /^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9])$/;
+    if (shortTimePattern.test(timeStr)) {
+        return timeStr + ":00";
+    } else {
+        throw new Error("Format invalide, assurez-vous que l'heure est au format HH:MM ou HH:MM:SS.");
+    }
+}
+
 module.exports = {
     createDoubleNonNull,
     isValidEmail,
@@ -170,5 +184,6 @@ module.exports = {
     valideFormatHeure,
     controlIntervalDate,
     heuretAnterieur,
-    addTimes
+    addTimes,
+    convertTimeToHHMMSS
 }

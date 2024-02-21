@@ -18,11 +18,12 @@ const controlInput = async (req, res) => {
                 return false;
             }
         }
-
+        heureDebut = outilHelper.convertTimeToHHMMSS(heureDebut);
         if (!heureDebut || !outilHelper.valideFormatHeure(heureDebut)) {
             res.status(400).json({ message: "heureDebut invalide ou vide. Le format attendu est HH:mm:ss." });
             return false;
         }
+        heureFin = outilHelper.convertTimeToHHMMSS(heureFin);
         if (!heureFin || !outilHelper.valideFormatHeure(heureFin)) {
             res.status(400).json({ message: "heureFin invalide ou vide. Le format attendu est HH:mm:ss." });
             return false;
@@ -34,10 +35,12 @@ const controlInput = async (req, res) => {
             return false;
         }
 
+        pauseDebut = outilHelper.convertTimeToHHMMSS(pauseDebut);
         if (!pauseDebut || !outilHelper.valideFormatHeure(pauseDebut)) {
             res.status(400).json({ message: "pauseDebut invalide ou vide. Le format attendu est HH:mm:ss." });
             return false;
         }
+        pauseFin = outilHelper.convertTimeToHHMMSS(pauseFin);
         if (!pauseFin || !outilHelper.valideFormatHeure(pauseFin)) {
             res.status(400).json({ message: "pauseFin invalide ou vide. Le format attendu est HH:mm:ss." });
             return false;
@@ -152,7 +155,7 @@ exports.update = async (req, res) => {
         let id = req.params.id;
         let idUser = '65bf662353006be666fda322';
         let { heureDebut, heureFin, pauseDebut, pauseFin } = req.body;
-        req.bodyidEmploye = idUser;
+        req.body.idEmploye = idUser;
         const validateInput = await controlInput(req, res);
         if (validateInput !== true) {
             return;
