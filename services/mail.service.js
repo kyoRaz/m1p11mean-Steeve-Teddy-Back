@@ -50,7 +50,7 @@ const sendMailActivation = (mailUser, token) => {
         let mailOptions = {
             to: mailUser,
             subject: 'Activation de votre compte',
-            html: `<p>Cliquez sur le lien suivant pour activer votre compte :</p><a href="${process.env.URL_FRONT}extra/activation?token=${token}">Activer mon compte</a>`
+            html: `<p>Cliquez sur le lien suivant pour activer votre compte :</p><a href="${process.env.URL_FRONT}extra/activate?token=${token}">Activer mon compte</a>`
         };
 
         // Envoi de l'email
