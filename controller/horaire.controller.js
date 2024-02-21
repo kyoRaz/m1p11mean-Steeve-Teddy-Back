@@ -109,7 +109,7 @@ exports.dispoUser = async (req, res) => {
 exports.dispoUserWithNoService = async (req, res) => {
     try {
         let { debutService, finService, date } = req.query;
-        let list = await horaireService.checkHoraireDispoUserWithNoService(null, debutService, finService,date);
+        let list = await horaireService.checkHoraireDispoUserWithNoService(null, debutService, finService, date);
         res.status(200).json({ size: list.length, resultat: list });
     } catch (error) {
         console.log(error);
@@ -121,6 +121,21 @@ exports.findOne = async (req, res) => {
     try {
         let id = req.params.id;
         let result = await horaireService.findById(id);
+        if (result) {
+            res.status(200).json({ result });
+        } else {
+            res.status(404).json({ message: "Entité  introuvable " });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
+
+exports.findByEmp = async (req, res) => {
+    try {
+        let id = req.params.id;
+        let result = await horaireService.findByIdEmp(id);
         if (result) {
             res.status(200).json({ result });
         } else {
