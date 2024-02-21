@@ -143,7 +143,7 @@ const finbByEmail = async (email) => {
 
 const finbById = async (id) => {
   try {
-    let user = await Utilisateur.findById(id).populate('roleId');
+    let user = await Utilisateur.findById(id).select('-password -tokenActivation -expirationToken').populate('roleId');
     return user;
   } catch (error) {
     throw error;
