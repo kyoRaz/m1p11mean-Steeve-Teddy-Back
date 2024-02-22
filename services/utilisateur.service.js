@@ -236,6 +236,7 @@ const getListEmploye = async () => {
       removed:false
     }).populate('roleId')
     .select('_id nom prenom email estActif')
+    .collation({ locale: 'en', strength: 1 })
     .sort({ prenom: 1 });
     return list;
   } catch (error) {
