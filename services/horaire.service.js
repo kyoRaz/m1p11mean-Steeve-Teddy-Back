@@ -154,7 +154,10 @@ const checkHoraireDispoUserWithNoService = async (idUser, debutServiceTarget, fi
             //Filtrer les rendez-vous qui ont la date donnée
             {
                 $match: {
-                    "rdvs.dateRdv": new Date(date)
+                    $or: [
+                        { "rdvs.dateRdv": new Date(date) },
+                        { "rdvs": [] } 
+                    ]
                 }
             },
             {
