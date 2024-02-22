@@ -72,6 +72,11 @@ function casteNbr(str) {
     }
 }
 
+function isNumber(str) {
+    const valeur = /^\d/.test(str);
+    return valeur;
+}
+
 const ajusterHeureDate = (dateObjet, heureString) => {
 
     let composantesHeure = heureString.split(":");
@@ -185,5 +190,6 @@ module.exports = {
     controlIntervalDate,
     heuretAnterieur,
     addTimes,
-    convertTimeToHHMMSS
+    convertTimeToHHMMSS,
+    isNumber
 }

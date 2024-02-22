@@ -32,7 +32,7 @@ exports.update = async (req, res) => {
             return res.status(400).json({ message: "Bad Request", details: 'Type de dépense vide' });
         }
         let list = await typeDepenseService.update(id, { libelle });
-        return res.status(200).json({ resultat: list });
+        return res.status(200).json({ size: list.length, resultat: list });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Error Server" });
