@@ -17,7 +17,7 @@ exports.create = async (req, res) => {
 exports.findAll = async (req, res) => {
     try {
         let list = await modePaiementService.find();
-        return res.status(200).json({ resultat: list });
+        return res.status(200).json({ size: list.length, resultat: list });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Error Server" });

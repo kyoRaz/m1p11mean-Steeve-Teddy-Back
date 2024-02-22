@@ -21,6 +21,7 @@ const schema = new Schema({
         required: false
     },
     montant: { type: Number, required: true },
+    etat:  { type: Number, required: true, default: 1 },
 });
 
 module.exports = mongoose.model('paiement', schema);
