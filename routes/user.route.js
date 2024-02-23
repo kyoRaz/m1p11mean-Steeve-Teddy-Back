@@ -200,6 +200,18 @@ router.get(`${route}/employes`, ctrl.findAllEmp);
 
 /**
  * @swagger
+ * /api/beauty/users/employes/all:
+ *   get:
+ *     summary: Liste tous les employés
+ *     description: Récupère une liste de tous les employés enregistrés.
+ *     responses:
+ *       200:
+ *         description: Liste paginée des utilisateurs récupérée avec succès
+ */
+router.get(`${route}/employes/all`, ctrl.getListEmploye);
+
+/**
+ * @swagger
  * /api/beauty/users/{id}:
  *   get:
  *     summary: getOne

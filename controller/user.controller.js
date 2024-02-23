@@ -245,6 +245,17 @@ exports.findAllEmp = async (req, res) => {
     }
 }
 
+exports.getListEmploye = async (req, res) => {
+
+    try {
+        let result = await utilisateurService.getListEmploye();
+        return res.status(200).json(result);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Une erreur s\'est produite' });
+    }
+}
+
 exports.getOne = async (req, res) => {
 
     try {

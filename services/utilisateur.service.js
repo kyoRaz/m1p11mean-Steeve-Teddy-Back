@@ -231,8 +231,12 @@ const withoutPassword = (user) => {
 const getListEmploye = async () => {
   try {
     let list = await Utilisateur.find({
-      roleId: process.env.ROLE_EMPLOYE
-    }).populate('roleId').select('_id nom prenom email estActif');
+      roleId: process.env.ROLE_EMPLOYE,
+      estActif: true,
+      removed:false
+    }).populate('roleId')
+    .select('_id nom prenom email estActif')
+    .sort({ prenom: 1 });
     return list;
   } catch (error) {
     throw error;
