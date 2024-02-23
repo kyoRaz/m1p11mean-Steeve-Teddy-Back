@@ -29,7 +29,7 @@ const annulerPaiement = async (id) => {
         if(paiement?.etat === ETAT_VALIDE){
             throw new ValidationError("Impossible d'annuler un paiement déjà validé");
         }
-        paiement = await Paiement.findByIdAndUpdate(id,data);
+        paiement = await Paiement.findByIdAndUpdate(id,data,{new: true});
         return paiement;
     }catch (error) {
         if (error.name === 'ValidationError' || error.code === 11000) {
@@ -51,7 +51,7 @@ const validerPaiement = async (id) => {
         if(paiement?.etat === ETAT_ANNULE){
             throw new ValidationError("Impossible de valider un paiement annulé");
         }
-        let newPaiement = await Paiement.findByIdAndUpdate(id,data);
+        let newPaiement = await Paiement.findByIdAndUpdate(id,data,{new: true});
         let caisse = new Caisse({entree: paiement.montant, sortie: 0,description: ("Validation "+paiement.description)});
         await caisse.save();
         return newPaiement;
