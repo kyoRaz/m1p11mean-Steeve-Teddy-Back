@@ -199,8 +199,8 @@ exports.delete = async (req, res) => {
 exports.historiqueRdvUser = async (req, res) => {
     try {
         let idUser = req.params.idUser;
-        let { page, limit } = req.query;
-        let result = await rdvService.historiqueRdv(idUser, page, limit);
+        let { page, limit,dateDebut,dateFin } = req.query;
+        let result = await rdvService.historiqueRdv(idUser, page, limit,dateDebut,dateFin);
         res.status(200).json({ size: result.length, resultat: result });
     } catch (error) {
         console.log(error);

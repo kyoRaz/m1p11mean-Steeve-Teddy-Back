@@ -166,7 +166,7 @@ const getRDVProche = async () => {
         throw error;
     }
 }
-const historiqueRdv = async (idUser,page,limit) => {
+const historiqueRdv = async (idUser,page,limit,dateDebut,dateFin) => {
     try {
         if(!page){
             page = 1;
@@ -178,8 +178,29 @@ const historiqueRdv = async (idUser,page,limit) => {
         }else{
             limit = parseInt(limit);
         }
+        let filtre = {idUser};
+
+        // Vérifier si dateDebut existe et est valide
+        if (dateDebut) {
+            const dateDebutObj = new Date(dateDebut);
+            if (!isNaN(dateDebutObj.getTime())) { // Vérifie si la dateDebut est valide
+                filtre.dateRdv = { $gte: dateDebutObj };
+            }
+        }
+
+        // Vérifier si dateFin existe et est valide
+        if (dateFin) {
+            const dateFinObj = new Date(dateFin);
+            if (!isNaN(dateFinObj.getTime())) { // Vérifie si la dateFin est valide
+                if (filtre.dateRdv) { // Si dateDebut a déjà été spécifié
+                    filtre.dateRdv.$lte = dateFinObj;
+                } else { // Si dateDebut n'a pas été spécifié
+                    filtre.dateRdv = { $lte: dateFinObj };
+                }
+            }
+        }
         const skipIndex = (page - 1) * limit;
-        let list = await Rdv.find({idUser})
+        let list = await Rdv.find(filtre)
         .sort({ dateRdv: -1 })
         .skip(skipIndex) // Ignorer les documents des pages précédentes
         .limit(limit);
