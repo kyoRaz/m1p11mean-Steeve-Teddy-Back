@@ -148,6 +148,25 @@ const createRdvandDetail = async (data, listDetails) => {
     }
 }
 
+const getRDVProche = async () => {
+    try {
+        const today = new Date();
+        const tomorrow = new Date(today); // Copie l'objet Date d'aujourd'hui pour éviter de modifier l'original
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowString = tomorrow.toISOString().split('T')[0];
+        let list = await Rdv.find({
+            dateRdv: tomorrowString,
+            estActif: true
+        }).populate({
+            path: 'idUser',
+            select: '_id nom prenom email',
+        });
+        return list;
+    } catch (error) {
+        throw error;
+    }
+}
+
 
 module.exports = {
     create,
@@ -156,5 +175,6 @@ module.exports = {
     findById,
     update,
     deleteById,
-    createRdvandDetail
+    createRdvandDetail,
+    getRDVProche
 }

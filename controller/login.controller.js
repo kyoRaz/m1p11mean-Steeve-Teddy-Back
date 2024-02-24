@@ -41,7 +41,7 @@ exports.auth = async (req, res) => {
             }
 
             // Create a JWT
-            let payload = { id: user.id };
+            let payload = { id: user._id };
             const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
             user = userService.withoutPassword(user);
             return res.status(200).json({

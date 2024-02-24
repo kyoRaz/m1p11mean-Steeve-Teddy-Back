@@ -129,16 +129,16 @@ const findAvailableUsers = async (heureDebut, heureFin) => {
     }
 };
 
-const historiqueRdvUsers = async (idUser,page,limit) => {
-    try{
-        if(!page){
+const historiqueRdvUsers = async (idUser, page, limit) => {
+    try {
+        if (!page) {
             page = 1;
-        }else{
+        } else {
             page = parseInt(page);
         }
-        if(!limit){
+        if (!limit) {
             limit = 10;
-        }else{
+        } else {
             limit = parseInt(limit);
         }
         const skipIndex = (page - 1) * limit;
@@ -155,7 +155,7 @@ const historiqueRdvUsers = async (idUser,page,limit) => {
             // Déroulez le tableau 'rdvDetails' pour obtenir les détails de rendez-vous
             { $unwind: '$rdvDetails' },
             // Filtrez les rendez-vous pour l'utilisateur donné
-            { $match: { "rdvDetails.idUser": new mongoose.Types.ObjectId(idUser)} },
+            { $match: { "rdvDetails.idUser": new mongoose.Types.ObjectId(idUser) } },
             {
                 $lookup: {
                     from: 'services',
@@ -179,7 +179,7 @@ const historiqueRdvUsers = async (idUser,page,limit) => {
             {
                 $project: {
                     _id: 1,
-                    dateRdv: "$rdvDetails.dateRdv" ,
+                    dateRdv: "$rdvDetails.dateRdv",
                     debutService: 1,
                     finService: 1,
                     statusService: 1,
@@ -190,10 +190,10 @@ const historiqueRdvUsers = async (idUser,page,limit) => {
                         delai: '$serviceDetails.delai',
                         prix: '$serviceDetails.prix',
                     },
-                    employe: { 
+                    employe: {
                         id: "$employeDetails._id",
-                        nom: "$employeDetails.nom", 
-                        prenom:"$employeDetails.prenom"
+                        nom: "$employeDetails.nom",
+                        prenom: "$employeDetails.prenom"
                     },
                 }
             },
@@ -202,18 +202,18 @@ const historiqueRdvUsers = async (idUser,page,limit) => {
             { $limit: limit } // limiter le nombre de résultats retournés
         ]);
         return historique;
-    }catch (error) {
+    } catch (error) {
         throw error;
     } finally {
-        
+
     }
 }
 
-const commissionObtenuEmploye = async (idEmploye,date) => {
-    try{
+const commissionObtenuEmploye = async (idEmploye, date) => {
+    try {
         const result = await RdvDetail.aggregate([
             // Filtrer les rdvdetail avec statusService = 'Fini' et l'idEmploye donné
-            
+
             {
                 // Effectuez une jointure avec la collection 'rdv' pour obtenir les informations sur le rendez-vous
                 $lookup: {
@@ -225,72 +225,89 @@ const commissionObtenuEmploye = async (idEmploye,date) => {
             },
             // Déroulez le tableau 'rdvDetails' pour obtenir les détails de rendez-vous
             { $unwind: '$rdvs' },
-            { $match: 
-                { 
-                    statusService: STATUT_RDV_FINI, 
+            {
+                $match:
+                {
+                    statusService: STATUT_RDV_FINI,
                     idEmploye: new mongoose.Types.ObjectId(idEmploye),
-                    "rdvs.dateRdv" : new Date(date)  
-                } 
+                    "rdvs.dateRdv": new Date(date)
+                }
             },
             // Jointure avec la collection 'services' pour obtenir les détails du service
             {
-              $lookup: {
-                from: 'services',
-                localField: 'idService',
-                foreignField: '_id',
-                as: 'serviceDetails'
-              }
+                $lookup: {
+                    from: 'services',
+                    localField: 'idService',
+                    foreignField: '_id',
+                    as: 'serviceDetails'
+                }
             },
             // Dérouler le tableau 'serviceDetails' pour obtenir chaque document de service
             { $unwind: '$serviceDetails' },
             // Projection pour garder les champs nécessaires
             {
-              $project: {
-                _id: 0,
-                nomService: '$serviceDetails.nom',
-                prixService: '$serviceDetails.prix',
-                commissionPercentage: '$serviceDetails.commission', // Pourcentage de commission
-                commissionAmount: { // Calculer le montant de la commission
-                  $multiply: [
-                    '$serviceDetails.prix',
-                    { $divide: ['$serviceDetails.commission', 100] }
-                  ]
+                $project: {
+                    _id: 0,
+                    nomService: '$serviceDetails.nom',
+                    prixService: '$serviceDetails.prix',
+                    commissionPercentage: '$serviceDetails.commission', // Pourcentage de commission
+                    commissionAmount: { // Calculer le montant de la commission
+                        $multiply: [
+                            '$serviceDetails.prix',
+                            { $divide: ['$serviceDetails.commission', 100] }
+                        ]
+                    }
                 }
-              }
             },
             // Exécuter plusieurs pipelines d'agrégation simultanément
             {
-              $facet: {
-                // Premier pipeline pour calculer la somme totale des commissions
-                totalCommission: [
-                  {
-                    $group: {
-                      _id: idEmploye,
-                      totalCommission: { $sum: '$commissionAmount' }
-                    }
-                  }
-                ],
-                // Deuxième pipeline pour obtenir la liste des détails individuels de chaque commission
-                commissionDetails: [
-                  {
-                    $project: {
-                      nomService: 1,
-                      prixService: 1,
-                      commissionPercentage: 1,
-                      commissionAmount: 1
-                    }
-                  }
-                ]
-              }
+                $facet: {
+                    // Premier pipeline pour calculer la somme totale des commissions
+                    totalCommission: [
+                        {
+                            $group: {
+                                _id: idEmploye,
+                                totalCommission: { $sum: '$commissionAmount' }
+                            }
+                        }
+                    ],
+                    // Deuxième pipeline pour obtenir la liste des détails individuels de chaque commission
+                    commissionDetails: [
+                        {
+                            $project: {
+                                nomService: 1,
+                                prixService: 1,
+                                commissionPercentage: 1,
+                                commissionAmount: 1
+                            }
+                        }
+                    ]
+                }
             }
         ]);
         return result;
-    }catch(error){
-      console.log(error)
-      throw error
+    } catch (error) {
+        console.log(error)
+        throw error
     }
-  }
-  
+}
+
+
+const findByIdRDV = async (id) => {
+    try {
+        let result = await RdvDetail.find({
+            idRdv: id
+        }).populate({
+            path: 'idEmploye',
+            select: '_id nom prenom',
+        }).populate('idService').
+            sort({ debutService: 1 });
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
+
 
 
 
@@ -304,5 +321,6 @@ module.exports = {
     findByIntervale,
     findAvailableUsers,
     historiqueRdvUsers,
-    commissionObtenuEmploye
+    commissionObtenuEmploye,
+    findByIdRDV
 }

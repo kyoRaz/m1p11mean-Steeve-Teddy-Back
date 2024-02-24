@@ -11,22 +11,25 @@ exports.create = async (req, res) => {
         now.setHours(0, 0, 0, 0);
 
         if (!dateRdv || !Date.parse(dateRdv)) {
-            return res.status(400).json({ message: "dateRdv est requis et doit être au format DateTime valide." });
+            let errorLog = { message: "dateRdv est requis et doit être au format DateTime valide." };
+            console.log("🚀 ~ exports.programmerRdv= ~ errorLog:", errorLog)
+            return res.status(400).json(errorLog);
         } else {
             const inputDate = new Date(dateRdv);
             inputDate.setHours(0, 0, 0, 0);
 
             if (inputDate < now) {
-                return res.status(400).json({ message: "dateRdv ne doit pas être une date antérieure à aujourd'hui." });
+                let errorLog = { message: "dateRdv ne doit pas être une date antérieure à aujourd'hui." };
+                console.log("🚀 ~ exports.programmerRdv= ~ errorLog:", errorLog)
+                return res.status(400).json(errorLog);
             }
         }
 
-
         if (!heureRdv || !outilHelper.valideFormatHeure(heureRdv)) {
-            console.log("🚀 ~ controlInput ~ heureRdv:", heureRdv)
-            return res.status(400).json({ message: "heureRdv invalide ou vide. Le format attendu est HH:mm:ss." });
+            let errorLog = { message: "heureRdv invalide ou vide. Le format attendu est HH:mm:ss." };
+            console.log("🚀 ~ exports.programmerRdv= ~ errorLog:", errorLog)
+            return res.status(400).json(errorLog);
         }
-
 
         let data = {
             idUser,
@@ -45,26 +48,32 @@ exports.create = async (req, res) => {
 
 exports.programmerRdv = async (req, res) => {
     try {
-        let idUser = '65bf4a4ababc23a0ac0ce336';
+        let user = req.user;
+        let idUser = user?.id || '65bf4a4ababc23a0ac0ce336';
         let { dateRdv, heureRdv, listDetails } = req.body;
 
         const now = new Date();
         now.setHours(0, 0, 0, 0);
 
         if (!dateRdv || !Date.parse(dateRdv)) {
-            return res.status(400).json({ message: "dateRdv est requis et doit être au format DateTime valide." });
+            let errorLog = { message: "dateRdv est requis et doit être au format DateTime valide." };
+            console.log("🚀 ~ exports.programmerRdv= ~ errorLog:", errorLog)
+            return res.status(400).json(errorLog);
         } else {
             const inputDate = new Date(dateRdv);
             inputDate.setHours(0, 0, 0, 0);
 
             if (inputDate < now) {
-                return res.status(400).json({ message: "dateRdv ne doit pas être une date antérieure à aujourd'hui." });
+                let errorLog = { message: "dateRdv ne doit pas être une date antérieure à aujourd'hui." };
+                console.log("🚀 ~ exports.programmerRdv= ~ errorLog:", errorLog)
+                return res.status(400).json(errorLog);
             }
         }
 
         if (!heureRdv || !outilHelper.valideFormatHeure(heureRdv)) {
-            console.log("🚀 ~ controlInput ~ heureRdv:", heureRdv)
-            return res.status(400).json({ message: "heureRdv invalide ou vide. Le format attendu est HH:mm:ss." });
+            let errorLog = { message: "heureRdv invalide ou vide. Le format attendu est HH:mm:ss." };
+            console.log("🚀 ~ exports.programmerRdv= ~ errorLog:", errorLog)
+            return res.status(400).json(errorLog);
         }
 
         let data = {
