@@ -92,7 +92,7 @@ router.get(`${route}`, ctrl.findAll);
 
 /**
  * @swagger
- * /rdvs/historique:
+ * /api/beauty/rdvs/historique:
  *   get:
  *     summary: Récupérer l'historique des rendez-vous de l'utilisateur
  *     tags: [Historique]
@@ -152,7 +152,7 @@ router.get(`${route}/historique`, ctrl.historiqueRdvUser);
 
 /**
  * @swagger
- * /rdvs/historiqueDetail/{idRdv}:
+ * /api/beauty/rdvs/historiqueDetail/{idRdv}:
  *   get:
  *     summary: Récupérer les détails d'un rendez-vous
  *     tags: [Historique]
