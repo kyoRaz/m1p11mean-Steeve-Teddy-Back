@@ -195,3 +195,15 @@ exports.delete = async (req, res) => {
         res.status(500).json({ message: "Error Server" });
     }
 }
+
+exports.historiqueRdvUser = async (req, res) => {
+    try {
+        let idUser = req.params.idUser;
+        let { page, limit } = req.query;
+        let result = await rdvService.historiqueRdv(idUser, page, limit);
+        res.status(200).json({ size: result.length, resultat: result });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}

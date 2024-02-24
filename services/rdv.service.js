@@ -166,6 +166,28 @@ const getRDVProche = async () => {
         throw error;
     }
 }
+const historiqueRdv = async (idUser,page,limit) => {
+    try {
+        if(!page){
+            page = 1;
+        }else{
+            page = parseInt(page);
+        }
+        if(!limit){
+            limit = 10;
+        }else{
+            limit = parseInt(limit);
+        }
+        const skipIndex = (page - 1) * limit;
+        let list = await Rdv.find({idUser})
+        .sort({ dateRdv: -1 })
+        .skip(skipIndex) // Ignorer les documents des pages précédentes
+        .limit(limit);
+        return list;
+    } catch (error) {
+        throw error;
+    }
+}
 
 
 module.exports = {
@@ -176,5 +198,6 @@ module.exports = {
     update,
     deleteById,
     createRdvandDetail,
-    getRDVProche
+    getRDVProche,
+    historiqueRdv
 }

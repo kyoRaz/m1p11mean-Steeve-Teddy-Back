@@ -109,6 +109,28 @@ router.get(`${route}`, ctrl.findAll);
  *         description: Rendez-vous non trouvé.
  */
 router.get(`${route}/:id`, ctrl.findOne);
+
+/**
+ * @swagger
+ * /api/beauty/rdvs/historique/{idUser}:
+ *   get:
+ *     summary: Trouve les historiques de rendez-vous par son ID
+ *     description: Récupère les historiques de rendez-vous par son ID.
+ *     parameters:
+ *       - in: path
+ *         name: idUser
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: L'ID de l'utilisateur
+ *     responses:
+ *       200:
+ *         description: Détail de rendez-vous récupéré avec succès
+ *       404:
+ *         description: Détail de rendez-vous non trouvé
+ */
+router.get(`${route}/historique/:idUser`, ctrl.historiqueRdvUser);
+
 /**
  * @swagger
  * /api/beauty/rdvs/{id}:
