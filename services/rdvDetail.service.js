@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const RdvDetail = require('../models/RdvDetail');
 const horaireService = require('./horaire.service');
 
@@ -127,6 +128,86 @@ const findAvailableUsers = async (heureDebut, heureFin) => {
     }
 };
 
+const historiqueRdvUsers = async (idUser,page,limit) => {
+    try{
+        if(!page){
+            page = 1;
+        }else{
+            page = parseInt(page);
+        }
+        if(!limit){
+            limit = 10;
+        }else{
+            limit = parseInt(limit);
+        }
+        const skipIndex = (page - 1) * limit;
+        const historique = await RdvDetail.aggregate([
+            {
+                // Effectuez une jointure avec la collection 'rdv' pour obtenir les informations sur le rendez-vous
+                $lookup: {
+                    from: "rdvs",
+                    localField: "idRdv",
+                    foreignField: '_id',
+                    as: "rdvDetails"
+                }
+            },
+            // Déroulez le tableau 'rdvDetails' pour obtenir les détails de rendez-vous
+            { $unwind: '$rdvDetails' },
+            // Filtrez les rendez-vous pour l'utilisateur donné
+            { $match: { "rdvDetails.idUser": new mongoose.Types.ObjectId(idUser)} },
+            {
+                $lookup: {
+                    from: 'services',
+                    localField: 'idService',
+                    foreignField: '_id',
+                    as: 'serviceDetails'
+                }
+            },
+            // Déroulez le tableau 'serviceDetails' pour obtenir les détails du service
+            { $unwind: '$serviceDetails' },
+            {
+                $lookup: {
+                    from: 'utilisateurs',
+                    localField: 'idEmploye',
+                    foreignField: '_id',
+                    as: 'employeDetails'
+                }
+            },
+            // Déroulez le tableau 'serviceDetails' pour obtenir les détails du service
+            { $unwind: '$employeDetails' },
+            {
+                $project: {
+                    _id: 1,
+                    dateRdv: "$rdvDetails.dateRdv" ,
+                    debutService: 1,
+                    finService: 1,
+                    statusService: 1,
+                    idUser: "$rdvDetails.idUser",
+                    service: {
+                        id: '$serviceDetails._id',
+                        nom: '$serviceDetails.nom',
+                        delai: '$serviceDetails.delai',
+                        prix: '$serviceDetails.prix',
+                    },
+                    employe: { 
+                        id: "$employeDetails._id",
+                        nom: "$employeDetails.nom", 
+                        prenom:"$employeDetails.prenom"
+                    },
+                }
+            },
+            // Pagination
+            { $skip: skipIndex }, // sauter les premiers résultats
+            { $limit: limit } // limiter le nombre de résultats retournés
+        ]);
+        return historique;
+    }catch (error) {
+        throw error;
+    } finally {
+        
+    }
+}
+
 
 
 module.exports = {
@@ -137,5 +218,6 @@ module.exports = {
     update,
     deleteById,
     findByIntervale,
-    findAvailableUsers
+    findAvailableUsers,
+    historiqueRdvUsers
 }

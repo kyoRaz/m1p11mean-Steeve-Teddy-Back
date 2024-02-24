@@ -127,6 +127,23 @@ exports.findOne = async (req, res) => {
     }
 }
 
+exports.historiqueRdvUser = async (req, res) => {
+    try {
+        let idUser = req.params.idUser;
+        let {page,limit} = req.query;
+        console.log(page,limit);
+        let result = await rdvDetailService.historiqueRdvUsers(idUser,page,limit);
+        if (result) {
+            res.status(200).json({ size: result.length , resultat: result });
+        } else {
+            res.status(404).json({ message: "Entité  introuvable " });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
+
 exports.update = async (req, res) => {
     try {
         let id = req.params.id;
