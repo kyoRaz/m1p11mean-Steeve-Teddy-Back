@@ -1,4 +1,7 @@
+const HoraireTravail = require('../models/HoraireTravail');
 const Horaire = require('../models/HoraireTravail');
+const Rdv = require('../models/Rdv');
+const RdvDetail = require('../models/RdvDetail');
 
 
 const create = async (data) => {
@@ -113,92 +116,54 @@ const checkHoraire = async (idUser, heureClient) => {
 
 const checkHoraireDispoUserWithNoService = async (idUser, debutServiceTarget, finServiceTarget, date) => {
     try {
-        let list = []
-        list = await Horaire.aggregate([
-            {
-                $match: {
-                    $or: [
+        
+
+        const employees = await HoraireTravail.find({
+            $or: [
+                {
+                    $and: [
                         {
-                            $and: [
-                                {
-                                    heureDebut: { $exists: true, $lte: debutServiceTarget }
-                                },
-                                { pauseDebut: { $exists: true, $gte: finServiceTarget } },
-                            ]
+                            heureDebut: { $exists: true, $lte: debutServiceTarget }
                         },
-                        {
-                            $and: [
-                                { pauseFin: { $exists: true, $lte: debutServiceTarget } },
-                                { heureFin: { $exists: true, $gte: finServiceTarget } },
-                            ]
-                        }
+                        {   pauseDebut: { $exists: true, $gte: finServiceTarget } 
+                        },
+                    ]
+                },
+                {
+                    $and: [
+                        { pauseFin: { $exists: true, $lte: debutServiceTarget } },
+                        { heureFin: { $exists: true, $gte: finServiceTarget } },
                     ]
                 }
-            },
-            {
-                $lookup: {
-                    from: "rdvdetails",
-                    localField: "idEmploye",
-                    foreignField: "idEmploye",
-                    as: "rdvdetails"
-                }
-            },
-            {
-                $lookup: {
-                    from: "rdvs",
-                    localField: "rdvdetails.idRdv",
-                    foreignField: "rdvs._id",
-                    as: "rdvs"
-                }
-            },
-            //Filtrer les rendez-vous qui ont la date donnée
-            {
-                $match: {
-                    $or: [
-                        { "rdvs.dateRdv": new Date(date) },
-                        { "rdvs": [] } 
-                    ]
-                }
-            },
-            {
-                $match: {
-                    rdvdetails: {
-                        $not: {
-                            $elemMatch: {
-                                debutService: { $lt: finServiceTarget },
-                                finService: { $gt: debutServiceTarget }
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                $lookup: {
-                    from: "utilisateurs",
-                    localField: "idEmploye",
-                    foreignField: "_id",
-                    as: "employee"
-                }
-            },
-            {
-                $unwind: "$employee"
-            },
-            {
-                $project: {
-                    _id: 0,
-                    idEmploye: {
-                        _id: "$employee._id",
-                        nom: "$employee.nom",
-                        prenom: "$employee.prenom",
-                    },
-                    heureDebut: 1,
-                    heureFin: 1,
-                    pauseDebut: 1,
-                    pauseFin: 1
-                }
+            ]
+        }).populate({
+            path:"idEmploye",
+            select: "_id nom prenom",
+            match: { removed: false }
+        });
+        console.log('employees');
+        console.log(employees);
+
+        const occupiedEmployees = await RdvDetail.find({
+            debutService: { $lt: finServiceTarget },
+            finService: { $gt: debutServiceTarget },
+            idRdv: {
+                $in: await Rdv.find({
+                    dateRdv: date ? new Date(date) : new Date()
+                }).distinct('_id')
             }
-        ]).exec();
-        return list;
+        }).populate({
+            path:"idEmploye",
+            select: "_id nom prenom",
+            match: { removed: false }
+        });
+        
+
+        const occupiedEmployeeIds = occupiedEmployees.filter(emp => emp.idEmploye).map(emp =>  emp.idEmploye._id.toString());
+        // Filtrer les employés disponibles en fonction des employés occupés
+        const availableEmployees = employees.filter(emp => emp.idEmploye).filter(emp => !occupiedEmployeeIds.includes(emp.idEmploye._id.toString()));
+
+        return availableEmployees;
     } catch (error) {
         throw error;
     }
