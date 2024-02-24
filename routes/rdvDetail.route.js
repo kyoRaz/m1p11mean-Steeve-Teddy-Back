@@ -127,6 +127,27 @@ router.get(`${route}/historique/:idUser`, ctrl.historiqueRdvUser);
 
 /**
  * @swagger
+ * /api/beauty/rdvDetails/commission/{idEmploye}:
+ *   get:
+ *     summary: Trouve les commissions de rendez-vous d'un employé
+ *     description: Récupère les commissions de rendez-vous d'un employé.
+ *     parameters:
+ *       - in: path
+ *         name: idEmploye
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: L'ID de l'employé
+ *     responses:
+ *       200:
+ *         description: 
+ *       404:
+ *         description: 
+ */
+router.get(`${route}/commission/:idEmploye`, ctrl.commissionObtenuEmploye);
+
+/**
+ * @swagger
  * /api/beauty/rdvDetails/{id}:
  *   put:
  *     summary: Met à jour un détail de rendez-vous par son ID

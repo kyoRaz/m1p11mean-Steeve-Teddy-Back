@@ -208,6 +208,89 @@ const historiqueRdvUsers = async (idUser,page,limit) => {
     }
 }
 
+const commissionObtenuEmploye = async (idEmploye,date) => {
+    try{
+        const result = await RdvDetail.aggregate([
+            // Filtrer les rdvdetail avec statusService = 'Fini' et l'idEmploye donné
+            
+            {
+                // Effectuez une jointure avec la collection 'rdv' pour obtenir les informations sur le rendez-vous
+                $lookup: {
+                    from: "rdvs",
+                    localField: "idRdv",
+                    foreignField: '_id',
+                    as: "rdvs"
+                }
+            },
+            // Déroulez le tableau 'rdvDetails' pour obtenir les détails de rendez-vous
+            { $unwind: '$rdvs' },
+            { $match: 
+                { 
+                    statusService: 'Fini', 
+                    idEmploye: new mongoose.Types.ObjectId(idEmploye),
+                    "rdvs.dateRdv" : new Date(date)  
+                } 
+            },
+            // Jointure avec la collection 'services' pour obtenir les détails du service
+            {
+              $lookup: {
+                from: 'services',
+                localField: 'idService',
+                foreignField: '_id',
+                as: 'serviceDetails'
+              }
+            },
+            // Dérouler le tableau 'serviceDetails' pour obtenir chaque document de service
+            { $unwind: '$serviceDetails' },
+            // Projection pour garder les champs nécessaires
+            {
+              $project: {
+                _id: 0,
+                nomService: '$serviceDetails.nom',
+                prixService: '$serviceDetails.prix',
+                commissionPercentage: '$serviceDetails.commission', // Pourcentage de commission
+                commissionAmount: { // Calculer le montant de la commission
+                  $multiply: [
+                    '$serviceDetails.prix',
+                    { $divide: ['$serviceDetails.commission', 100] }
+                  ]
+                }
+              }
+            },
+            // Exécuter plusieurs pipelines d'agrégation simultanément
+            {
+              $facet: {
+                // Premier pipeline pour calculer la somme totale des commissions
+                totalCommission: [
+                  {
+                    $group: {
+                      _id: idEmploye,
+                      totalCommission: { $sum: '$commissionAmount' }
+                    }
+                  }
+                ],
+                // Deuxième pipeline pour obtenir la liste des détails individuels de chaque commission
+                commissionDetails: [
+                  {
+                    $project: {
+                      nomService: 1,
+                      prixService: 1,
+                      commissionPercentage: 1,
+                      commissionAmount: 1
+                    }
+                  }
+                ]
+              }
+            }
+        ]);
+        return result;
+    }catch(error){
+      console.log(error)
+      throw error
+    }
+  }
+  
+
 
 
 module.exports = {
@@ -219,5 +302,6 @@ module.exports = {
     deleteById,
     findByIntervale,
     findAvailableUsers,
-    historiqueRdvUsers
+    historiqueRdvUsers,
+    commissionObtenuEmploye
 }

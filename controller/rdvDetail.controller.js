@@ -143,6 +143,22 @@ exports.historiqueRdvUser = async (req, res) => {
     }
 }
 
+exports.commissionObtenuEmploye = async (req, res) => {
+    try {
+        let idEmploye = req.params.idEmploye;
+        let date = req.query.date;
+        let result = await rdvDetailService.commissionObtenuEmploye(idEmploye,date);
+        if (result) {
+            res.status(200).json({ resultat: result });
+        } else {
+            res.status(404).json({ message: "Entité  introuvable " });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
+
 exports.update = async (req, res) => {
     try {
         let id = req.params.id;
