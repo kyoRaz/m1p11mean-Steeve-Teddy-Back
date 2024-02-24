@@ -74,7 +74,77 @@ router.get(`${route}`, ctrl.findAll);
  */
 router.get(`${route}/check`, ctrl.checkHoraire);
 router.get(`${route}/dispoUser`, ctrl.dispoUser);
+
+/**
+ * @swagger
+ * /dispoUserWithNoService:
+ *   get:
+ *     summary: Recherche les disponibilités d'utilisateur sans service
+ *     description: Retourne une liste des disponibilités des utilisateurs qui n'ont pas de service durant la période spécifiée.
+ *     parameters:
+ *       - in: query
+ *         name: debutService
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         required: true
+ *         description: Heure de début du service au format ISO 8601.
+ *       - in: query
+ *         name: finService
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         required: true
+ *         description: Heure de fin du service au format ISO 8601.
+ *       - in: query
+ *         name: date
+ *         schema:
+ *           type: string
+ *           format: date
+ *         required: true
+ *         description: Date pour laquelle les disponibilités sont recherchées, au format YYYY-MM-DD.
+ *     responses:
+ *       200:
+ *         description: Une liste des disponibilités trouvées.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 size:
+ *                   type: integer
+ *                   description: Le nombre de disponibilités trouvées.
+ *                 resultat:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       # Définissez ici les propriétés spécifiques de votre objet de disponibilité
+ *                       # Exemple :
+ *                       userId:
+ *                         type: string
+ *                         description: L'identifiant de l'utilisateur.
+ *                       startTime:
+ *                         type: string
+ *                         format: date-time
+ *                         description: Heure de début de la disponibilité.
+ *                       endTime:
+ *                         type: string
+ *                         format: date-time
+ *                         description: Heure de fin de la disponibilité.
+ *       500:
+ *         description: Erreur interne du serveur.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Error Server"
+ */
 router.get(`${route}/dispoUserWithNoService`, ctrl.dispoUserWithNoService);
+
 /**
  * @swagger
  * /api/beauty/horaires/employe/{id}:
