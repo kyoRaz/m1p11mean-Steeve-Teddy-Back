@@ -92,17 +92,11 @@ router.get(`${route}`, ctrl.findAll);
 
 /**
  * @swagger
- * /{route}/historique:
+ * /rdvs/historique:
  *   get:
  *     summary: Récupérer l'historique des rendez-vous de l'utilisateur
  *     tags: [Historique]
  *     parameters:
- *       - in: path
- *         name: route
- *         required: true
- *         description: Le chemin de la route
- *         schema:
- *           type: string
  *       - in: query
  *         name: page
  *         schema:
@@ -158,17 +152,11 @@ router.get(`${route}/historique`, ctrl.historiqueRdvUser);
 
 /**
  * @swagger
- * /{route}/historiqueDetail/{idRdv}:
+ * /rdvs/historiqueDetail/{idRdv}:
  *   get:
  *     summary: Récupérer les détails d'un rendez-vous
  *     tags: [Historique]
  *     parameters:
- *       - in: path
- *         name: route
- *         required: true
- *         description: Le chemin de la route
- *         schema:
- *           type: string
  *       - in: path
  *         name: idRdv
  *         required: true

@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const RdvDetail = require('../models/RdvDetail');
+const Service = require('../models/Service');
 const horaireService = require('./horaire.service');
-const { STATUT_RDV_FINI } = require('../helpers/constants');
+const { STATUT_RDV_FINI, STATUT_RDV_NOUVEAU } = require('../helpers/constants');
+const { ValidationError } = require('../helpers/ValidationError');
 
 const create = async (data) => {
     try {
@@ -15,13 +17,19 @@ const create = async (data) => {
 
 const createDetail = async (idRdv, detail, session) => {
     try {
+        const service = await Service.findById(detail.idService);
+        if(!service){
+            throw new ValidationError("Service non trouvé")
+        }
+
         let data = {
             idRdv,
             idService: detail.idService,
             idEmploye: detail.idEmploye,
             debutService: detail.debutService,
             finService: detail.finService,
-            statusService: "Nouveau"
+            statusService: STATUT_RDV_NOUVEAU,
+            prixService: service.prix
         }
         let rdv = new RdvDetail(data);
         const newObject = await rdv.save({ session });
