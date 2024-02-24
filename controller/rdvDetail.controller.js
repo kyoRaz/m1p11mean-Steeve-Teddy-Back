@@ -131,10 +131,10 @@ exports.findOne = async (req, res) => {
 exports.historiqueRdvUser = async (req, res) => {
     try {
         let idUser = req.params.idUser;
-        let {page,limit} = req.query;
-        let result = await rdvDetailService.historiqueRdvUsers(idUser,page,limit);
+        let { page, limit } = req.query;
+        let result = await rdvDetailService.historiqueRdvUsers(idUser, page, limit);
         if (result) {
-            res.status(200).json({ size: result.length , resultat: result });
+            res.status(200).json({ size: result.length, resultat: result });
         } else {
             res.status(404).json({ message: "Entité  introuvable " });
         }
@@ -148,7 +148,7 @@ exports.commissionObtenuEmploye = async (req, res) => {
     try {
         let idEmploye = req.params.idEmploye;
         let date = req.query.date;
-        let result = await rdvDetailService.commissionObtenuEmploye(idEmploye,date);
+        let result = await rdvDetailService.commissionObtenuEmploye(idEmploye, date);
         if (result) {
             res.status(200).json({ resultat: result });
         } else {
@@ -184,10 +184,10 @@ exports.update = async (req, res) => {
     }
 }
 
-exports.annulerRdv = async (res,res) => {
+exports.annulerRdv = async (req, res) => {
     try {
         let id = req.params.id;
-        const data = {statusService: STATUT_RDV_ANNULE};
+        const data = { statusService: STATUT_RDV_ANNULE };
         let result = await rdvDetailService.update(id, data);
         res.status(200).json({ resultat: result });
     } catch (error) {
@@ -196,15 +196,15 @@ exports.annulerRdv = async (res,res) => {
             return res.status(400).json({ message: 'Erreur de validation', error: error.message });
         } else { // Gérer les autres erreurs avec un code 500
             console.error('Erreur interne:', error);
-            return res.status(500).json({message: "Erreur interne",details: error?.message});
+            return res.status(500).json({ message: "Erreur interne", details: error?.message });
         }
     }
 }
 
-exports.commencerRdv = async (res,res) => {
+exports.commencerRdv = async (req, res) => {
     try {
         let id = req.params.id;
-        const data = {statusService: STATUT_RDV_EN_COURS};
+        const data = { statusService: STATUT_RDV_EN_COURS };
         let result = await rdvDetailService.update(id, data);
         res.status(200).json({ resultat: result });
     } catch (error) {
@@ -213,15 +213,15 @@ exports.commencerRdv = async (res,res) => {
             return res.status(400).json({ message: 'Erreur de validation', error: error.message });
         } else { // Gérer les autres erreurs avec un code 500
             console.error('Erreur interne:', error);
-            return res.status(500).json({message: "Erreur interne",details: error?.message});
+            return res.status(500).json({ message: "Erreur interne", details: error?.message });
         }
     }
 }
 
-exports.finirRdv = async (res,res) => {
+exports.finirRdv = async (req, res) => {
     try {
         let id = req.params.id;
-        const data = {statusService: STATUT_RDV_FINI};
+        const data = { statusService: STATUT_RDV_FINI };
         let result = await rdvDetailService.update(id, data);
         res.status(200).json({ resultat: result });
     } catch (error) {
@@ -230,7 +230,7 @@ exports.finirRdv = async (res,res) => {
             return res.status(400).json({ message: 'Erreur de validation', error: error.message });
         } else { // Gérer les autres erreurs avec un code 500
             console.error('Erreur interne:', error);
-            return res.status(500).json({message: "Erreur interne",details: error?.message});
+            return res.status(500).json({ message: "Erreur interne", details: error?.message });
         }
     }
 }
