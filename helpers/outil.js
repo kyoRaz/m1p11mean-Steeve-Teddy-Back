@@ -176,6 +176,25 @@ function convertTimeToHHMMSS(timeStr) {
     }
 }
 
+function completeTimeFormat(timeString) {
+    const parts = timeString.split(":");
+    let hour = parts[0].padStart(2, "0");
+    let minute = "00";
+    let second = "00";
+
+    // Vérifier si la chaîne contient des minutes
+    if (parts.length > 1) {
+        minute = parts[1].padStart(2, "0");
+
+        // Vérifier si la chaîne contient des secondes
+        if (parts.length > 2) {
+            second = parts[2].padStart(2, "0");
+        }
+    }
+
+    return `${hour}:${minute}:${second}`;
+}
+
 module.exports = {
     createDoubleNonNull,
     isValidEmail,
@@ -191,5 +210,6 @@ module.exports = {
     heuretAnterieur,
     addTimes,
     convertTimeToHHMMSS,
-    isNumber
+    isNumber,
+    completeTimeFormat
 }

@@ -1,3 +1,4 @@
+const { completeTimeFormat } = require('../helpers/outil');
 const HoraireTravail = require('../models/HoraireTravail');
 const Horaire = require('../models/HoraireTravail');
 const Rdv = require('../models/Rdv');
@@ -117,7 +118,8 @@ const checkHoraire = async (idUser, heureClient) => {
 const checkHoraireDispoUserWithNoService = async (idUser, debutServiceTarget, finServiceTarget, date) => {
     try {
         
-
+        debutServiceTarget = completeTimeFormat(debutServiceTarget);
+        finServiceTarget = completeTimeFormat(finServiceTarget);
         const employees = await HoraireTravail.find({
             $or: [
                 {
@@ -157,6 +159,9 @@ const checkHoraireDispoUserWithNoService = async (idUser, debutServiceTarget, fi
             select: "_id nom prenom",
             match: { removed: false }
         });
+
+        console.log("occupiedEmployees");
+        console.log(occupiedEmployees)
         
 
         const occupiedEmployeeIds = occupiedEmployees.filter(emp => emp.idEmploye).map(emp =>  emp.idEmploye._id.toString());
