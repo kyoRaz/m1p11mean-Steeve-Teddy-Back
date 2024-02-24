@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const RdvDetail = require('../models/RdvDetail');
 const horaireService = require('./horaire.service');
+const { STATUT_RDV_FINI } = require('../helpers/constants');
 
 const create = async (data) => {
     try {
@@ -226,7 +227,7 @@ const commissionObtenuEmploye = async (idEmploye,date) => {
             { $unwind: '$rdvs' },
             { $match: 
                 { 
-                    statusService: 'Fini', 
+                    statusService: STATUT_RDV_FINI, 
                     idEmploye: new mongoose.Types.ObjectId(idEmploye),
                     "rdvs.dateRdv" : new Date(date)  
                 } 
