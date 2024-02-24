@@ -89,6 +89,125 @@ router.post(`${route}/config`, ctrl.programmerRdv);
  *         description: Liste des rendez-vous récupérée avec succès.
  */
 router.get(`${route}`, ctrl.findAll);
+
+/**
+ * @swagger
+ * /{route}/historique:
+ *   get:
+ *     summary: Récupérer l'historique des rendez-vous de l'utilisateur
+ *     tags: [Historique]
+ *     parameters:
+ *       - in: path
+ *         name: route
+ *         required: true
+ *         description: Le chemin de la route
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Numéro de la page à afficher
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 10
+ *         description: Nombre d'éléments par page
+ *       - in: query
+ *         name: dateDebut
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Date de début de l'intervalle pour l'historique des rendez-vous
+ *       - in: query
+ *         name: dateFin
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Date de fin de l'intervalle pour l'historique des rendez-vous
+ *     responses:
+ *       '200':
+ *         description: Succès. Retourne l'historique des rendez-vous de l'utilisateur.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 size:
+ *                   type: integer
+ *                   description: Nombre total de résultats.
+ *                 resultat:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/RendezVous'
+ *       '500':
+ *         description: Erreur Serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
+router.get(`${route}/historique`, ctrl.historiqueRdvUser);
+
+/**
+ * @swagger
+ * /{route}/historiqueDetail/{idRdv}:
+ *   get:
+ *     summary: Récupérer les détails d'un rendez-vous
+ *     tags: [Historique]
+ *     parameters:
+ *       - in: path
+ *         name: route
+ *         required: true
+ *         description: Le chemin de la route
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: idRdv
+ *         required: true
+ *         description: L'ID du rendez-vous pour lequel récupérer les détails
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Succès. Retourne les détails du rendez-vous.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 result:
+ *                   $ref: '#/components/schemas/Detail'
+ *       '404':
+ *         description: Entité introuvable
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       '500':
+ *         description: Erreur Serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
+
+router.get(`${route}/historiqueDetail/:idRdv`, ctrl.findDetails);
+
+
 /**
  * @swagger
  * /api/beauty/rdvs/{id}:
@@ -110,26 +229,6 @@ router.get(`${route}`, ctrl.findAll);
  */
 router.get(`${route}/:id`, ctrl.findOne);
 
-/**
- * @swagger
- * /api/beauty/rdvs/historique/{idUser}:
- *   get:
- *     summary: Trouve les historiques de rendez-vous par son ID
- *     description: Récupère les historiques de rendez-vous par son ID.
- *     parameters:
- *       - in: path
- *         name: idUser
- *         required: true
- *         schema:
- *           type: string
- *         description: L'ID de l'utilisateur
- *     responses:
- *       200:
- *         description: Détail de rendez-vous récupéré avec succès
- *       404:
- *         description: Détail de rendez-vous non trouvé
- */
-router.get(`${route}/historique/:idUser`, ctrl.historiqueRdvUser);
 
 /**
  * @swagger

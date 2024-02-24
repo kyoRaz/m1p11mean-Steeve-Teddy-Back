@@ -141,6 +141,21 @@ exports.findOne = async (req, res) => {
     }
 }
 
+exports.findDetails = async (req, res) => {
+    try {
+        let idRdv = req.params.idRdv;
+        let result = await rdvService.findDetails(idRdv);
+        if (result) {
+            res.status(200).json({ result });
+        } else {
+            res.status(404).json({ message: "Entité  introuvable " });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
+
 exports.update = async (req, res) => {
     try {
         let id = req.params.id;
@@ -198,7 +213,8 @@ exports.delete = async (req, res) => {
 
 exports.historiqueRdvUser = async (req, res) => {
     try {
-        let idUser = req.params.idUser;
+        // let user = req?.user;
+        let idUser = '65bf4a4ababc23a0ac0ce336';
         let { page, limit,dateDebut,dateFin } = req.query;
         let result = await rdvService.historiqueRdv(idUser, page, limit,dateDebut,dateFin);
         res.status(200).json({ size: result.length, resultat: result });

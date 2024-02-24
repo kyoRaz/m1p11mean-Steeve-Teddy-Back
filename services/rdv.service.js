@@ -1,4 +1,5 @@
 const Rdv = require('../models/Rdv');
+const RdvDetail = require('../models/RdvDetail');
 const { startSession } = require('mongoose');
 const rdvDetailService = require('./rdvDetail.service');
 
@@ -95,6 +96,23 @@ const findById = async (id) => {
             path: 'idUser',
             select: '_id nom prenom',
         })
+        return list;
+    } catch (error) {
+        throw error;
+    }
+}
+
+const findDetails = async (idRdv) => {
+    try {
+        let list = await RdvDetail.find({idRdv})
+            .populate({
+                path: 'idService',
+                select: '_id nom prix delai',
+            })
+            .populate({
+                path: "idEmploye",
+                select: "_id nom prenom"
+            });
         return list;
     } catch (error) {
         throw error;
@@ -220,5 +238,6 @@ module.exports = {
     deleteById,
     createRdvandDetail,
     getRDVProche,
-    historiqueRdv
+    historiqueRdv,
+    findDetails
 }
