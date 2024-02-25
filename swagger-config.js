@@ -4,7 +4,7 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Eglise shine API',
+      title: 'Mean API',
       version: '1.0.0',
       description: 'Api back end',
     },
