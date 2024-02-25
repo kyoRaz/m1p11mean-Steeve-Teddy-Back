@@ -86,3 +86,14 @@ exports.chiffreDAffaireParJour = async (req, res) => {
         res.status(500).json({ message: "Error Server" });
     }
 }
+
+exports.tempsTravailMoyenDUnEmploye = async (req, res) => {
+    try{
+        const {dateDebut,dateFin,idEmploye} = req.query;
+        let liste = await statistiqueService.tempsTravailMoyenDUnEmploye(dateDebut,dateFin,idEmploye);
+        res.status(200).json({ size: liste.length, resultat: liste });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
