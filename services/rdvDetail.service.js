@@ -4,6 +4,7 @@ const Service = require('../models/Service');
 const horaireService = require('./horaire.service');
 const { STATUT_RDV_FINI, STATUT_RDV_NOUVEAU } = require('../helpers/constants');
 const { ValidationError } = require('../helpers/ValidationError');
+const { completeTimeFormat } = require('../helpers/outil');
 
 const create = async (data) => {
     try {
@@ -21,13 +22,13 @@ const createDetail = async (idRdv, detail, session) => {
         if (!service) {
             throw new ValidationError("Service non trouvé")
         }
-
+        
         let data = {
             idRdv,
             idService: detail.idService,
             idEmploye: detail.idEmploye,
-            debutService: detail.debutService,
-            finService: detail.finService,
+            debutService: completeTimeFormat(detail.debutService),
+            finService: completeTimeFormat(detail.finService),
             statusService: STATUT_RDV_NOUVEAU,
             prixService: service.prix
         }
@@ -65,6 +66,8 @@ const findById = async (id) => {
 
 const update = async (id, data) => {
     try {
+        data.debutService =  completeTimeFormat(detail.debutService);
+        data.finService = completeTimeFormat(detail.finService);
         const update = {
             $set: data
         };
