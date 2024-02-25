@@ -22,7 +22,7 @@ const createDetail = async (idRdv, detail, session) => {
         if (!service) {
             throw new ValidationError("Service non trouvé")
         }
-        
+
         let data = {
             idRdv,
             idService: detail.idService,
@@ -66,7 +66,7 @@ const findById = async (id) => {
 
 const update = async (id, data) => {
     try {
-        data.debutService =  completeTimeFormat(detail.debutService);
+        data.debutService = completeTimeFormat(detail.debutService);
         data.finService = completeTimeFormat(detail.finService);
         const update = {
             $set: data
@@ -319,9 +319,8 @@ const findByIdRDV = async (id) => {
     }
 }
 
-const getTacheEffectue = async (idEmploye, start, end) => {
+const getTacheEffectue = async (idEmploye, start, end, page = 1, pageSize = 10) => {
     try {
-
         let matchCondition = {
             idEmploye: new mongoose.Types.ObjectId(idEmploye),
             statusService: "Fini"
@@ -335,36 +334,69 @@ const getTacheEffectue = async (idEmploye, start, end) => {
             matchCondition["rdvInfo.dateRdv"] = { $lte: new Date(end) };
         }
 
-        let result = await RdvDetail.aggregate(
-            [
-                {
-                    $lookup: {
-                        from: "rdvs",
-                        localField: "idRdv",
-                        foreignField: "_id",
-                        as: "rdvInfo"
-                    }
-                },
-                { $unwind: "$rdvInfo" },
-                {
-                    $match: matchCondition
-                },
-                {
-                    $addFields: {
-                        dateRdv: "$rdvInfo.dateRdv"
-                    }
-                },
-                {
-                    $sort: { dateRdv: -1 }
-                }
-            ]
-        );
-        return result;
-    } catch (error) {
-        throw error;
-    }
-}
+        let skip = (page - 1) * pageSize;
 
+        const total = await RdvDetail.aggregate([
+            {
+                $lookup: {
+                    from: "rdvs",
+                    localField: "idRdv",
+                    foreignField: "_id",
+                    as: "rdvInfo"
+                }
+            },
+            { $unwind: "$rdvInfo" },
+            {
+                $match: matchCondition
+            },
+            {
+                $count: "total"
+            }
+        ]);
+
+        const totalCount = total.length > 0 ? total[0].total : 0;
+
+        let result = await RdvDetail.aggregate([
+            {
+                $lookup: {
+                    from: "rdvs",
+                    localField: "idRdv",
+                    foreignField: "_id",
+                    as: "rdvInfo"
+                }
+            },
+            { $unwind: "$rdvInfo" },
+            {
+                $match: matchCondition
+            },
+            {
+                $lookup: {
+                    from: "services",
+                    localField: "idService",
+                    foreignField: "_id",
+                    as: "serviceInfo"
+                }
+            },
+            { $unwind: "$serviceInfo" },
+            {
+                $sort: { "rdvInfo.dateRdv": -1 }
+            },
+            { $skip: skip },
+            { $limit: pageSize }
+        ]);
+
+        return {
+            totalPages: Math.ceil(totalCount / pageSize),
+            currentPage: page,
+            pageSize: pageSize,
+            total: totalCount,
+            data: result
+        };
+    } catch (error) {
+        console.error(error);
+        throw new Error("Server Error");
+    }
+};
 
 
 
