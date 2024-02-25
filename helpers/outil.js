@@ -195,6 +195,21 @@ function completeTimeFormat(timeString) {
     return `${hour}:${minute}:${second}`;
 }
 
+const formatterDate = (date) => {
+    // Tableaux de noms de jours et de mois
+    const joursSemaine = ["dim.", "lun.", "mar.", "mer.", "jeu.", "ven.", "sam."];
+    const mois = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+
+    // Obtenez le jour, le mois et l'année de la date
+    const jour = joursSemaine[date.getDay()];
+    const jourMois = date.getDate();
+    const moisAnnee = mois[date.getMonth()];
+    const annee = date.getFullYear();
+
+    // Retournez la date formatée
+    return `${jour} ${jourMois} ${moisAnnee} ${annee}`;
+};
+
 module.exports = {
     createDoubleNonNull,
     isValidEmail,
@@ -211,5 +226,6 @@ module.exports = {
     addTimes,
     convertTimeToHHMMSS,
     isNumber,
-    completeTimeFormat
+    completeTimeFormat,
+    formatterDate
 }

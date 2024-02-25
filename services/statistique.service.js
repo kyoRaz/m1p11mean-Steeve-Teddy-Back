@@ -3,7 +3,7 @@ const Rdv = require("../models/Rdv");
 const Caisse = require("../models/Caisse");
 const Utilisateur = require("../models/Utilisateur");
 const RdvDetail = require("../models/RdvDetail");
-const { completeTimeFormat } = require("../helpers/outil");
+const { completeTimeFormat, formatterDate } = require("../helpers/outil");
 
 const Paiement = require("../models/Paiement");
 
@@ -264,21 +264,24 @@ const tempsTravailMoyenParEmploye = async (dateDebut, dateFin) => {
         ]);
         // Obtenez la liste complète des employés depuis la collection 'utilisateurs'
         const employes = await Utilisateur.find({roleId: process.env.ROLE_EMPLOYE}, { _id: 1, nom: 1, prenom: 1 });
-
-        const result = employes.map(employe => {
+        const data = {
+            labels: [],
+            data: {
+                tempsTravailMinute: [],
+                tempsTravailHeure: []
+            }
+        };
+        
+        employes.map(employe => {
             const tempsTravail = tempsTravails.find(entry => entry.idEmploye.toString() === employe._id.toString());
-            console.log(employe)
-            console.log(tempsTravail)
-            return {
-                idEmploye: employe._id,
-                nomEmploye: employe.nom,
-                prenomEmploye: employe.prenom,
-                tempsTravailMinute: tempsTravail?.avgServiceTime ? tempsTravail?.avgServiceTime : 0,
-                tempsTravailHeure: tempsTravail?.avgServiceTime ? tempsTravail?.avgServiceTime/60 : 0
-            };
+            
+            data.labels.push(employe.nom+" "+employe.prenom);
+            data.data.tempsTravailMinute.push(tempsTravail?.avgServiceTime ? tempsTravail?.avgServiceTime : 0);
+            data.data.tempsTravailHeure.push(tempsTravail?.avgServiceTime ? tempsTravail?.avgServiceTime/60 : 0);
+            
         });
 
-        return result;
+        return data;
     }catch(error){
         throw error;
     }
@@ -397,7 +400,6 @@ const chiffreDAffaireParMois = async (year) => {
 }
 
 
-
 const getDaysBetweenDates = (startDate, endDate) => {
     const days = [];
     const currentDate = new Date(startDate);
@@ -475,21 +477,30 @@ const tempsTravailMoyenDUnEmploye = async (dateDebut, dateFin,idEmploye) => {
             }
         ]);
 
-        
+        const data = {
+            labels: [],
+            data: {
+                tempsTravailMinute: [],
+                tempsTravailHeure: []
+            }
+        };
         
         const allDates = getDaysBetweenDates(date1,date2);
-        const result = allDates.map(date => {
+        allDates.map(date => {
             const dateString = date.toISOString().split('T')[0];
             const tempsTravail = tempsTravails.find(entry => entry._id === dateString);
-            return {
-                date: dateString,
-                tempsTravailMinute: tempsTravail ? tempsTravail.totalServiceTime : 0,
-                tempsTravailHeure: tempsTravail ? tempsTravail.totalServiceTime/60 : 0
-            };
+            
+            data.labels.push(formatterDate(date));
+            data.data.tempsTravailMinute.push(tempsTravail ? tempsTravail.totalServiceTime : 0);
+            data.data.tempsTravailHeure.push(tempsTravail ? tempsTravail.totalServiceTime/60 : 0);
+            
         });
+
+        
+        
         
 
-        return result;
+        return data;
     }catch(error){
         throw error;
     }
