@@ -44,11 +44,23 @@ exports.beneficeParMoisIncluantDepense = async (req, res) => {
     }
 }
 
+exports.tempsTravailMoyenParEmploye = async (req, res) => {
+    try{
+        const {dateDebut,dateFin} = req.query;
+        let liste = await statistiqueService.tempsTravailMoyenParEmploye(dateDebut,dateFin);
+        res.status(200).json({ size: liste.length, resultat: liste });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
+
 exports.chiffreDAffaireParMois = async (req, res) => {
     try{
         const {annee} = req.query;
         let liste = await statistiqueService.chiffreDAffaireParMois(annee);
         res.status(200).json({ size: liste.length, resultat: liste });
+        
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Error Server" });

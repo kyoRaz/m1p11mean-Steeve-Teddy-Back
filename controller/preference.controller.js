@@ -2,15 +2,20 @@ const prefService = require('../services/preference.service');
 
 exports.create = async (req, res) => {
     try {
-        let idUser = '65bf4a4ababc23a0ac0ce336';
+        let user = req.user;
+        let idUser = user?.id || '65bf4a4ababc23a0ac0ce336';
         let { idService, idEmpFav } = req.body;
 
         if (!idService || idService == "") {
-            return res.status(400).json({ message: "Bad Request", details: 'idService vide' });
+            let errorLog = { message: "Bad Request", details: 'idService vide' };
+            console.log("🚀 ~ exports.create= ~ errorLog:", errorLog)
+            return res.status(400).json(errorLog);
         }
 
         if (!idEmpFav || idEmpFav == "") {
-            return res.status(400).json({ message: "Bad Request", details: 'idEmpFav vide' });
+            let errorLog = { message: "Bad Request", details: 'idEmpFav vide' };
+            console.log("🚀 ~ exports.create= ~ errorLog:", errorLog)
+            return res.status(400).json(errorLog);
         }
 
         let data = {
@@ -19,10 +24,19 @@ exports.create = async (req, res) => {
             idUser
         }
 
+        let prefWithService = await prefService.findOne({ idUser, idService });
+        if (prefWithService) {
+            let errorLog = { message: "Bad Request", details: 'Une  Preference avec ce  service existe deja' };
+            console.log("🚀 ~ exports.create= ~ errorLog:", errorLog);
+            return res.status(400).json(errorLog);
+        }
+
 
         let pref = await prefService.findOne(data);
         if (pref) {
-            return res.status(400).json({ message: "Bad Request", details: 'Cette  Preference existe deja' });
+            let errorLog = { message: "Bad Request", details: 'Cette  Preference existe deja' };
+            console.log("🚀 ~ exports.create= ~ errorLog:", errorLog);
+            return res.status(400).json(errorLog);
         }
 
         let result = await prefService.create(data);
@@ -35,7 +49,9 @@ exports.create = async (req, res) => {
 
 exports.findAll = async (req, res) => {
     try {
-        let list = await prefService.find();
+        let user = req.user;
+        let idUser = user?.id || '65bf4a4ababc23a0ac0ce336';
+        let list = await prefService.find(idUser);
         return res.status(200).json({ resultat: list });
     } catch (error) {
         console.log(error);
@@ -46,7 +62,8 @@ exports.findAll = async (req, res) => {
 exports.update = async (req, res) => {
     try {
         let id = req.params.id;
-        let idUser = '65bf4a4ababc23a0ac0ce336';
+        let user = req.user;
+        let idUser = user?.id || '65bf4a4ababc23a0ac0ce336';
         let { idService, idEmpFav } = req.body;
 
         if (!idService || idService == "") {

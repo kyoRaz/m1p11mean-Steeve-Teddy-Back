@@ -11,22 +11,25 @@ exports.create = async (req, res) => {
         now.setHours(0, 0, 0, 0);
 
         if (!dateRdv || !Date.parse(dateRdv)) {
-            return res.status(400).json({ message: "dateRdv est requis et doit être au format DateTime valide." });
+            let errorLog = { message: "dateRdv est requis et doit être au format DateTime valide." };
+            console.log("🚀 ~ exports.programmerRdv= ~ errorLog:", errorLog)
+            return res.status(400).json(errorLog);
         } else {
             const inputDate = new Date(dateRdv);
             inputDate.setHours(0, 0, 0, 0);
 
             if (inputDate < now) {
-                return res.status(400).json({ message: "dateRdv ne doit pas être une date antérieure à aujourd'hui." });
+                let errorLog = { message: "dateRdv ne doit pas être une date antérieure à aujourd'hui." };
+                console.log("🚀 ~ exports.programmerRdv= ~ errorLog:", errorLog)
+                return res.status(400).json(errorLog);
             }
         }
 
-
         if (!heureRdv || !outilHelper.valideFormatHeure(heureRdv)) {
-            console.log("🚀 ~ controlInput ~ heureRdv:", heureRdv)
-            return res.status(400).json({ message: "heureRdv invalide ou vide. Le format attendu est HH:mm:ss." });
+            let errorLog = { message: "heureRdv invalide ou vide. Le format attendu est HH:mm:ss." };
+            console.log("🚀 ~ exports.programmerRdv= ~ errorLog:", errorLog)
+            return res.status(400).json(errorLog);
         }
-
 
         let data = {
             idUser,
@@ -45,26 +48,32 @@ exports.create = async (req, res) => {
 
 exports.programmerRdv = async (req, res) => {
     try {
-        let idUser = '65bf4a4ababc23a0ac0ce336';
+        let user = req.user;
+        let idUser = user?.id || '65bf4a4ababc23a0ac0ce336';
         let { dateRdv, heureRdv, listDetails } = req.body;
 
         const now = new Date();
         now.setHours(0, 0, 0, 0);
 
         if (!dateRdv || !Date.parse(dateRdv)) {
-            return res.status(400).json({ message: "dateRdv est requis et doit être au format DateTime valide." });
+            let errorLog = { message: "dateRdv est requis et doit être au format DateTime valide." };
+            console.log("🚀 ~ exports.programmerRdv= ~ errorLog:", errorLog)
+            return res.status(400).json(errorLog);
         } else {
             const inputDate = new Date(dateRdv);
             inputDate.setHours(0, 0, 0, 0);
 
             if (inputDate < now) {
-                return res.status(400).json({ message: "dateRdv ne doit pas être une date antérieure à aujourd'hui." });
+                let errorLog = { message: "dateRdv ne doit pas être une date antérieure à aujourd'hui." };
+                console.log("🚀 ~ exports.programmerRdv= ~ errorLog:", errorLog)
+                return res.status(400).json(errorLog);
             }
         }
 
         if (!heureRdv || !outilHelper.valideFormatHeure(heureRdv)) {
-            console.log("🚀 ~ controlInput ~ heureRdv:", heureRdv)
-            return res.status(400).json({ message: "heureRdv invalide ou vide. Le format attendu est HH:mm:ss." });
+            let errorLog = { message: "heureRdv invalide ou vide. Le format attendu est HH:mm:ss." };
+            console.log("🚀 ~ exports.programmerRdv= ~ errorLog:", errorLog)
+            return res.status(400).json(errorLog);
         }
 
         let data = {
@@ -132,6 +141,21 @@ exports.findOne = async (req, res) => {
     }
 }
 
+exports.findDetails = async (req, res) => {
+    try {
+        let idRdv = req.params.idRdv;
+        let result = await rdvService.findDetails(idRdv);
+        if (result) {
+            res.status(200).json({ result });
+        } else {
+            res.status(404).json({ message: "Entité  introuvable " });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
+
 exports.update = async (req, res) => {
     try {
         let id = req.params.id;
@@ -181,6 +205,19 @@ exports.delete = async (req, res) => {
         let id = req.params.id;
         await rdvService.deleteById(id);
         return res.status(200).json({ message: "suppression effectué" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
+
+exports.historiqueRdvUser = async (req, res) => {
+    try {
+        // let user = req?.user;
+        let idUser = '65bf4a4ababc23a0ac0ce336';
+        let { page, limit,dateDebut,dateFin } = req.query;
+        let result = await rdvService.historiqueRdv(idUser, page, limit,dateDebut,dateFin);
+        res.status(200).json({ size: result.length, resultat: result });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Error Server" });

@@ -18,9 +18,6 @@ let route = '/prefs';
  *           schema:
  *             type: object
  *             properties:
- *               idUser:
- *                 type: string
- *                 description: Identifiant de l'utilisateur
  *               idService:
  *                 type: string
  *                 description: Identifiant du service

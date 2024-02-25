@@ -200,6 +200,40 @@ router.get(`${route}/employes`, ctrl.findAllEmp);
 
 /**
  * @swagger
+ * /api/beauty/users/employes/all:
+ *   get:
+ *     summary: Liste tous les employés
+ *     description: Récupère une liste de tous les employés enregistrés.
+ *     responses:
+ *       200:
+ *         description: Liste paginée des utilisateurs récupérée avec succès
+ */
+router.get(`${route}/employes/all`, ctrl.getListEmploye);
+
+/**
+ * @swagger
+ * /api/beauty/users/{id}:
+ *   get:
+ *     summary: getOne
+ *     description: get One User
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: succès
+ *       400:
+ *         description: Requête invalide, rôle vide
+ *       500:
+ *         description: Erreur interne du serveur
+ */
+router.get(`${route}/:id`, ctrl.getOne);
+
+/**
+ * @swagger
  * /api/beauty/users/{id}:
  *   delete:
  *     summary: desactive User

@@ -15,12 +15,13 @@ const schema = new Schema({
         ref: 'rdv',
         required: false
     },
-    id: {
+    idModePaiement: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'modePaiement',
         required: false
     },
     montant: { type: Number, required: true },
+    etat:  { type: Number, required: true, default: 1 },
 });
 
 module.exports = mongoose.model('paiement', schema);

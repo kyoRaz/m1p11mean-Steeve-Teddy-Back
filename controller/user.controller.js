@@ -165,7 +165,7 @@ exports.activeAndPasswd = async (req, res) => {
 exports.update = async (req, res) => {
     try {
         let id = req.params.id;
-        let {nom,prenom} = req.body;
+        let { nom, prenom } = req.body;
 
         if (!nom || nom == "") {
             return res.status(400).json({ message: 'Bad Request', details: "Le nom ne  doit pas  être pas  vide" });
@@ -175,11 +175,11 @@ exports.update = async (req, res) => {
             return res.status(400).json({ message: 'Bad Request', details: "Le prenom ne  doit pas  être pas  vide" });
 
         }
-        let  data ={
-            nom,prenom 
+        let data = {
+            nom, prenom
         }
 
-        let obj = await utilisateurService.update(id, data );
+        let obj = await utilisateurService.update(id, data);
         return res.status(200).json({ message: "success" });
     } catch (error) {
         console.log(error);
@@ -238,6 +238,30 @@ exports.findAllEmp = async (req, res) => {
 
         let result = await utilisateurService.findAndFilterByRole(filter, null, page, limit, "employe");
 
+        return res.status(200).json(result);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Une erreur s\'est produite' });
+    }
+}
+
+exports.getListEmploye = async (req, res) => {
+
+    try {
+        let result = await utilisateurService.getListEmploye();
+        return res.status(200).json(result);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Une erreur s\'est produite' });
+    }
+}
+
+exports.getOne = async (req, res) => {
+
+    try {
+        let id = req.params.id;
+
+        let result = await utilisateurService.finbById(id);
         return res.status(200).json(result);
     } catch (error) {
         console.log(error);

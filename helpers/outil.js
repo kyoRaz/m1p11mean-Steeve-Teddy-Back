@@ -72,6 +72,11 @@ function casteNbr(str) {
     }
 }
 
+function isNumber(str) {
+    const valeur = /^\d/.test(str);
+    return valeur;
+}
+
 const ajusterHeureDate = (dateObjet, heureString) => {
 
     let composantesHeure = heureString.split(":");
@@ -157,6 +162,39 @@ function addTimes(time1, time2) {
     return `${hours}:${minutes}:${seconds}`;
 }
 
+function convertTimeToHHMMSS(timeStr) {
+    const fullTimePattern = /^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9]):([0-5]?[0-9])$/;
+    if (fullTimePattern.test(timeStr)) {
+        return timeStr;
+    }
+
+    const shortTimePattern = /^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9])$/;
+    if (shortTimePattern.test(timeStr)) {
+        return timeStr + ":00";
+    } else {
+        throw new Error("Format invalide, assurez-vous que l'heure est au format HH:MM ou HH:MM:SS.");
+    }
+}
+
+function completeTimeFormat(timeString) {
+    const parts = timeString.split(":");
+    let hour = parts[0].padStart(2, "0");
+    let minute = "00";
+    let second = "00";
+
+    // Vérifier si la chaîne contient des minutes
+    if (parts.length > 1) {
+        minute = parts[1].padStart(2, "0");
+
+        // Vérifier si la chaîne contient des secondes
+        if (parts.length > 2) {
+            second = parts[2].padStart(2, "0");
+        }
+    }
+
+    return `${hour}:${minute}:${second}`;
+}
+
 module.exports = {
     createDoubleNonNull,
     isValidEmail,
@@ -170,5 +208,8 @@ module.exports = {
     valideFormatHeure,
     controlIntervalDate,
     heuretAnterieur,
-    addTimes
+    addTimes,
+    convertTimeToHHMMSS,
+    isNumber,
+    completeTimeFormat
 }

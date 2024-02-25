@@ -85,6 +85,42 @@ router.get(`${route}/filtre`, ctrl.findIntervale);
 
 /**
  * @swagger
+ * /api/beauty/rdvDetails/done/{idUser}:
+ *   get:
+ *     summary: Récupère les tâches effectuées par un utilisateur entre deux dates.
+ *     tags: [Tâches]
+ *     parameters:
+ *       - in: path
+ *         name: idUser
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: L'ID de l'utilisateur
+ *       - in: query
+ *         name: debut
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Date de début au format YYYY-MM-DD
+ *       - in: query
+ *         name: fin
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Date de fin au format YYYY-MM-DD
+ *     responses:
+ *       200:
+ *         description: Une liste des tâches effectuées.
+ *       400:
+ *         description: Les dates doivent être au format YYYY-MM-DD et ne peuvent pas être vides.
+ *       500:
+ *         description: Erreur serveur.
+ */
+
+router.get(`${route}/done/:idUser`, ctrl.getTacheEffectuer);
+
+/**
+ * @swagger
  * /api/beauty/rdvDetails/{id}:
  *   get:
  *     summary: Trouve un détail de rendez-vous par son ID
@@ -103,6 +139,48 @@ router.get(`${route}/filtre`, ctrl.findIntervale);
  *         description: Détail de rendez-vous non trouvé
  */
 router.get(`${route}/:id`, ctrl.findOne);
+
+/**
+ * @swagger
+ * /api/beauty/rdvDetails/historique/{idUser}:
+ *   get:
+ *     summary: Trouve les historiques de rendez-vous par son ID
+ *     description: Récupère les historiques de rendez-vous par son ID.
+ *     parameters:
+ *       - in: path
+ *         name: idUser
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: L'ID de l'utilisateur
+ *     responses:
+ *       200:
+ *         description: Détail de rendez-vous récupéré avec succès
+ *       404:
+ *         description: Détail de rendez-vous non trouvé
+ */
+router.get(`${route}/historique/:idUser`, ctrl.historiqueRdvUser);
+
+/**
+ * @swagger
+ * /api/beauty/rdvDetails/commission/{idEmploye}:
+ *   get:
+ *     summary: Trouve les commissions de rendez-vous d'un employé
+ *     description: Récupère les commissions de rendez-vous d'un employé.
+ *     parameters:
+ *       - in: path
+ *         name: idEmploye
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: L'ID de l'employé
+ *     responses:
+ *       200:
+ *         description: 
+ *       404:
+ *         description: 
+ */
+router.get(`${route}/commission/:idEmploye`, ctrl.commissionObtenuEmploye);
 
 /**
  * @swagger
@@ -156,5 +234,8 @@ router.put(`${route}/:id`, ctrl.update);
  *         description: Détail de rendez-vous supprimé avec succès
  */
 router.delete(`${route}/:id`, ctrl.delete);
+
+
+
 
 module.exports = router;

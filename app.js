@@ -3,6 +3,8 @@ var express = require('express');
 var cors = require('cors');
 const routes = require("./routes");
 const bodyParser = require("body-parser");
+const cron = require('node-cron');
+const mailService = require('./services/mail.service');
 require('./dbconnection/db');
 
 var app = express();
@@ -26,6 +28,17 @@ app.use(morgan('dev'));
 
 //Route 
 app.use("/api/beauty", routes);
+
+// Cron
+const dailyTask = async () => {
+  await mailService.sendRappel();
+};
+
+// Planifier la tâche quotidienne à 15h00
+cron.schedule('0 15 * * *', dailyTask, {
+  scheduled: true,
+  timezone: "Africa/Nairobi"
+});
 
 
 

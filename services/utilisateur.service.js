@@ -1,11 +1,24 @@
 const Utilisateur = require('../models/Utilisateur');
+const HoraireTravail = require('../models/HoraireTravail');
 const bcrypt = require('bcrypt');
 const authHelper = require('../helpers/auth');
 const mailService = require('./mail.service');
+const { startSession } = require('mongoose');
+const { createWithTransaction } = require('./rdv.service');
 const create = async (data) => {
   try {
     const nouvelUtilisateur = new Utilisateur(data);
     const newUser = await nouvelUtilisateur.save();
+    return newUser;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const createWithSession = async (data,session) => {
+  try {
+    const nouvelUtilisateur = new Utilisateur(data);
+    const newUser = await nouvelUtilisateur.save({session});
     return newUser;
   } catch (error) {
     throw error;
@@ -27,6 +40,28 @@ async function createUser(data, roleId) {
 
     data.roleId = roleId;
     let newUser = await create(data);
+    return newUser;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function createUserWithTransaction(data, roleId, session) {
+  try {
+    let { email, password } = data;
+    const utilisateurExistant = await Utilisateur.findOne({ email });
+    if (utilisateurExistant) {
+      throw new Error('Cet utilisateur existe déjà.');
+    }
+
+    if (password) {
+      const passwordHache = await bcrypt.hash(password, 10);
+      data.password = passwordHache;
+    }
+
+    data.roleId = roleId;
+    
+    let newUser = await createWithSession(data,session);
     return newUser;
   } catch (error) {
     throw error;
@@ -56,14 +91,34 @@ const ajoutPersonnel = async (data, roleId) => {
   }
 }
 
-const ajoutEmploye = async (data) => {
+const ajoutPersonnelWithTransaction = async (data, roleId,session) => {
   try {
-    let roleEmplye = process.env.ROLE_EMPLOYE;
-    let newUser = await ajoutPersonnel(data, roleEmplye);
-    mailService.sendMailActivation(newUser.email, newUser.tokenActivation);
+    let { tokenActivation, expirationToken } = authHelper.generateActivationToken();
+    data.tokenActivation = tokenActivation;
+    data.expirationToken = expirationToken;
+    let newUser = await createUserWithTransaction(data, roleId,session);
     return newUser;
   } catch (error) {
     throw error;
+  }
+}
+
+const ajoutEmploye = async (data) => {
+  const session = await startSession();
+  session.startTransaction();
+  try {
+    let roleEmplye = process.env.ROLE_EMPLOYE;
+    let newUser = await ajoutPersonnelWithTransaction(data, roleEmplye,session);
+    let horaireTravail = new HoraireTravail({idEmploye: newUser._id,heureDebut: "08:00:00",pauseDebut: "12:00:00",pauseFin: "13:00:00",heureFin: "17:00:00"});
+    await horaireTravail.save({session});
+    mailService.sendMailActivation(newUser.email, newUser.tokenActivation);
+    await session.commitTransaction();
+    return newUser;
+  } catch (error) {
+      await session.abortTransaction();
+      throw error;
+  } finally {
+      session.endSession();
   }
 }
 
@@ -88,7 +143,7 @@ const finbByEmail = async (email) => {
 
 const finbById = async (id) => {
   try {
-    let user = await Utilisateur.findById(id).populate('roleId');
+    let user = await Utilisateur.findById(id).select('-password -tokenActivation -expirationToken').populate('roleId');
     return user;
   } catch (error) {
     throw error;
@@ -176,8 +231,13 @@ const withoutPassword = (user) => {
 const getListEmploye = async () => {
   try {
     let list = await Utilisateur.find({
-      roleId: process.env.ROLE_EMPLOYE
-    }).populate('roleId').select('_id nom prenom email estActif');
+      roleId: process.env.ROLE_EMPLOYE,
+      estActif: true,
+      removed:false
+    }).populate('roleId')
+    .select('_id nom prenom email estActif')
+    .collation({ locale: 'en', strength: 1 })
+    .sort({ prenom: 1 });
     return list;
   } catch (error) {
     throw error;
@@ -216,6 +276,7 @@ const findAndFilter = async (filter, orderBy, page, limit) => {
 
     const query = {};
 
+    filter ? null : filter = {};
     filter.removed = false;
     if (filter) {
       Object.assign(query, filter);

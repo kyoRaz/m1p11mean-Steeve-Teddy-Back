@@ -11,9 +11,9 @@ const create = async (data) => {
     }
 }
 
-const find = async () => {
+const find = async (idUser) => {
     try {
-        let list = await Preference.find().populate({
+        let list = await Preference.find({ idUser }).populate({
             path: 'idEmpFav',
             select: '_id nom prenom',
         }).populate('idService')

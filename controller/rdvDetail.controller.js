@@ -3,6 +3,7 @@ const rdvService = require('../services/rdv.service');
 const srvService = require('../services/service.service');
 const userService = require('../services/utilisateur.service');
 const outilHelper = require('../helpers/outil');
+const { STATUT_RDV_NOUVEAU, STATUT_RDV_ANNULE, STATUT_RDV_FINI, STATUT_RDV_EN_COURS } = require('../helpers/constants');
 
 
 const controlInput = async (req, res) => {
@@ -80,7 +81,7 @@ exports.create = async (req, res) => {
             idEmploye,
             debutService,
             finService,
-            statusService: "Nouveau"
+            statusService: STATUT_RDV_NOUVEAU
         }
 
         let result = await rdvDetailService.create(data);
@@ -127,6 +128,38 @@ exports.findOne = async (req, res) => {
     }
 }
 
+exports.historiqueRdvUser = async (req, res) => {
+    try {
+        let idUser = req.params.idUser;
+        let { page, limit } = req.query;
+        let result = await rdvDetailService.historiqueRdvUsers(idUser, page, limit);
+        if (result) {
+            res.status(200).json({ size: result.length, resultat: result });
+        } else {
+            res.status(404).json({ message: "Entité  introuvable " });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
+
+exports.commissionObtenuEmploye = async (req, res) => {
+    try {
+        let idEmploye = req.params.idEmploye;
+        let date = req.query.date;
+        let result = await rdvDetailService.commissionObtenuEmploye(idEmploye, date);
+        if (result) {
+            res.status(200).json({ resultat: result });
+        } else {
+            res.status(404).json({ message: "Entité  introuvable " });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
+
 exports.update = async (req, res) => {
     try {
         let id = req.params.id;
@@ -151,6 +184,57 @@ exports.update = async (req, res) => {
     }
 }
 
+exports.annulerRdv = async (req, res) => {
+    try {
+        let id = req.params.id;
+        const data = { statusService: STATUT_RDV_ANNULE };
+        let result = await rdvDetailService.update(id, data);
+        res.status(200).json({ resultat: result });
+    } catch (error) {
+        console.log(error);
+        if (error.name === 'ValidationError' || error.code === 11000) { // Vérifiez le type d'erreur ou le code d'erreur spécifique
+            return res.status(400).json({ message: 'Erreur de validation', error: error.message });
+        } else { // Gérer les autres erreurs avec un code 500
+            console.error('Erreur interne:', error);
+            return res.status(500).json({ message: "Erreur interne", details: error?.message });
+        }
+    }
+}
+
+exports.commencerRdv = async (req, res) => {
+    try {
+        let id = req.params.id;
+        const data = { statusService: STATUT_RDV_EN_COURS };
+        let result = await rdvDetailService.update(id, data);
+        res.status(200).json({ resultat: result });
+    } catch (error) {
+        console.log(error);
+        if (error.name === 'ValidationError' || error.code === 11000) { // Vérifiez le type d'erreur ou le code d'erreur spécifique
+            return res.status(400).json({ message: 'Erreur de validation', error: error.message });
+        } else { // Gérer les autres erreurs avec un code 500
+            console.error('Erreur interne:', error);
+            return res.status(500).json({ message: "Erreur interne", details: error?.message });
+        }
+    }
+}
+
+exports.finirRdv = async (req, res) => {
+    try {
+        let id = req.params.id;
+        const data = { statusService: STATUT_RDV_FINI };
+        let result = await rdvDetailService.update(id, data);
+        res.status(200).json({ resultat: result });
+    } catch (error) {
+        console.log(error);
+        if (error.name === 'ValidationError' || error.code === 11000) { // Vérifiez le type d'erreur ou le code d'erreur spécifique
+            return res.status(400).json({ message: 'Erreur de validation', error: error.message });
+        } else { // Gérer les autres erreurs avec un code 500
+            console.error('Erreur interne:', error);
+            return res.status(500).json({ message: "Erreur interne", details: error?.message });
+        }
+    }
+}
+
 exports.delete = async (req, res) => {
     try {
         let id = req.params.id;
@@ -161,3 +245,25 @@ exports.delete = async (req, res) => {
         res.status(500).json({ message: "Error Server" });
     }
 }
+
+exports.getTacheEffectuer = async (req, res) => {
+    try {
+        const { idUser } = req.params;
+        const { debut, fin, page, pageSize } = req.query;
+
+        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+        if ((!debut || !fin || !dateRegex.test(debut) || !dateRegex.test(fin)) && (debut || fin)) {
+            return res.status(400).json({ message: "Les dates doivent être au format YYYY-MM-DD." });
+        }
+
+        const pageNum = parseInt(page, 10) || 1;
+        const pageSizeNum = parseInt(pageSize, 10) || 10;
+
+        const result = await rdvDetailService.getTacheEffectue(idUser, debut, fin, pageNum, pageSizeNum);
+
+        return res.status(200).json(result);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+};

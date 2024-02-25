@@ -1,4 +1,5 @@
 const Rdv = require('../models/Rdv');
+const RdvDetail = require('../models/RdvDetail');
 const { startSession } = require('mongoose');
 const rdvDetailService = require('./rdvDetail.service');
 
@@ -101,6 +102,23 @@ const findById = async (id) => {
     }
 }
 
+const findDetails = async (idRdv) => {
+    try {
+        let list = await RdvDetail.find({idRdv})
+            .populate({
+                path: 'idService',
+                select: '_id nom prix delai',
+            })
+            .populate({
+                path: "idEmploye",
+                select: "_id nom prenom"
+            });
+        return list;
+    } catch (error) {
+        throw error;
+    }
+}
+
 
 const update = async (id, data) => {
     try {
@@ -148,6 +166,68 @@ const createRdvandDetail = async (data, listDetails) => {
     }
 }
 
+const getRDVProche = async () => {
+    try {
+        const today = new Date();
+        const tomorrow = new Date(today); // Copie l'objet Date d'aujourd'hui pour éviter de modifier l'original
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowString = tomorrow.toISOString().split('T')[0];
+        let list = await Rdv.find({
+            dateRdv: tomorrowString,
+            estActif: true
+        }).populate({
+            path: 'idUser',
+            select: '_id nom prenom email',
+        });
+        return list;
+    } catch (error) {
+        throw error;
+    }
+}
+const historiqueRdv = async (idUser,page,limit,dateDebut,dateFin) => {
+    try {
+        if(!page){
+            page = 1;
+        }else{
+            page = parseInt(page);
+        }
+        if(!limit){
+            limit = 10;
+        }else{
+            limit = parseInt(limit);
+        }
+        let filtre = {idUser};
+
+        // Vérifier si dateDebut existe et est valide
+        if (dateDebut) {
+            const dateDebutObj = new Date(dateDebut);
+            if (!isNaN(dateDebutObj.getTime())) { // Vérifie si la dateDebut est valide
+                filtre.dateRdv = { $gte: dateDebutObj };
+            }
+        }
+
+        // Vérifier si dateFin existe et est valide
+        if (dateFin) {
+            const dateFinObj = new Date(dateFin);
+            if (!isNaN(dateFinObj.getTime())) { // Vérifie si la dateFin est valide
+                if (filtre.dateRdv) { // Si dateDebut a déjà été spécifié
+                    filtre.dateRdv.$lte = dateFinObj;
+                } else { // Si dateDebut n'a pas été spécifié
+                    filtre.dateRdv = { $lte: dateFinObj };
+                }
+            }
+        }
+        const skipIndex = (page - 1) * limit;
+        let list = await Rdv.find(filtre)
+        .sort({ dateRdv: -1 })
+        .skip(skipIndex) // Ignorer les documents des pages précédentes
+        .limit(limit);
+        return list;
+    } catch (error) {
+        throw error;
+    }
+}
+
 
 module.exports = {
     create,
@@ -156,5 +236,8 @@ module.exports = {
     findById,
     update,
     deleteById,
-    createRdvandDetail
+    createRdvandDetail,
+    getRDVProche,
+    historiqueRdv,
+    findDetails
 }
