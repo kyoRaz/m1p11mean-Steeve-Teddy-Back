@@ -31,7 +31,7 @@ exports.auth = async (req, res) => {
             return res.status(404).json({ message: 'Utilisateur introuvable' });
         }
 
-        if (!user.estActif) {
+        if (!user.estActif || user.removed) {
             return res.status(403).json({ message: 'Compte desactivé' });
         } else {
             // Compare the password
