@@ -117,7 +117,7 @@ router.get(`${route}/filtre`, ctrl.findIntervale);
  *         description: Erreur serveur.
  */
 
-router.get(`${route}/done/:id`, ctrl.delete);
+router.get(`${route}/done/:idUser`, ctrl.getTacheEffectuer);
 
 /**
  * @swagger
