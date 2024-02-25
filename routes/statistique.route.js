@@ -8,5 +8,7 @@ router.get(`${route}/nombreReservationParMois`, ctrl.nombreReservationParMois);
 router.get(`${route}/nombreReservationParJour`, ctrl.nombreReservationParJour);
 router.get(`${route}/beneficeParMoisIncluantDepense`, ctrl.beneficeParMoisIncluantDepense);
 router.get(`${route}/tempsTravailMoyenParEmploye`, ctrl.tempsTravailMoyenParEmploye);
+router.get(`${route}/chiffreDAffaireParMois`, ctrl.chiffreDAffaireParMois);
+router.get(`${route}/chiffreDAffaireParJour`, ctrl.chiffreDAffaireParJour);
 
 module.exports = router
