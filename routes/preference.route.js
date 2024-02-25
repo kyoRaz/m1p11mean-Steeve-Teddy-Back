@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const ctrl = require('../controller/preference.controller');
-
+const { auth } = require('../helpers/auth');
 
 let route = '/prefs';
 
@@ -30,7 +30,7 @@ let route = '/prefs';
  *       400:
  *         description: Erreur de création de la préférence.
  */
-router.post(`${route}`, ctrl.create);
+router.post(`${route}`, [auth], ctrl.create);
 /**
  * @swagger
  * /api/beauty/prefs:
@@ -43,7 +43,7 @@ router.post(`${route}`, ctrl.create);
  *       404:
  *         description: Aucune préférence trouvée.
  */
-router.get(`${route}`, ctrl.findAll);
+router.get(`${route}`, [auth], ctrl.findAll);
 /**
  * @swagger
  * /api/beauty/prefs/{id}:
@@ -76,7 +76,7 @@ router.get(`${route}`, ctrl.findAll);
  *       404:
  *         description: Préférence non trouvée.
  */
-router.put(`${route}/:id`, ctrl.update);
+router.put(`${route}/:id`, [auth], ctrl.update);
 /**
  * @swagger
  * /api/beauty/prefs/{id}:
@@ -96,6 +96,6 @@ router.put(`${route}/:id`, ctrl.update);
  *       404:
  *         description: Préférence non trouvée.
  */
-router.delete(`${route}/:id`, ctrl.delete);
+router.delete(`${route}/:id`, [auth], ctrl.delete);
 
 module.exports = router;

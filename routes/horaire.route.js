@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const ctrl = require('../controller/horaire.controller');
-
+const { auth } = require('../helpers/auth');
 
 let route = '/horaires';
 /**
@@ -45,7 +45,7 @@ let route = '/horaires';
  *       200:
  *         description: Succès
  */
-router.post(`${route}`, ctrl.create);
+router.post(`${route}`, [auth], ctrl.create);
 /**
  * @swagger
  * /api/beauty/horaires:
@@ -55,7 +55,7 @@ router.post(`${route}`, ctrl.create);
  *       200:
  *         description: Une liste d'horaires
  */
-router.get(`${route}`, ctrl.findAll);
+router.get(`${route}`, [auth], ctrl.findAll);
 /**
  * @swagger
  * /api/beauty/horaires/check:
@@ -72,8 +72,8 @@ router.get(`${route}`, ctrl.findAll);
  *       200:
  *         description: Taille et résultat de la vérification
  */
-router.get(`${route}/check`, ctrl.checkHoraire);
-router.get(`${route}/dispoUser`, ctrl.dispoUser);
+router.get(`${route}/check`, [auth], ctrl.checkHoraire);
+router.get(`${route}/dispoUser`, [auth], ctrl.dispoUser);
 
 /**
  * @swagger
@@ -143,7 +143,7 @@ router.get(`${route}/dispoUser`, ctrl.dispoUser);
  *                   type: string
  *                   example: "Error Server"
  */
-router.get(`${route}/dispoUserWithNoService`, ctrl.dispoUserWithNoService);
+router.get(`${route}/dispoUserWithNoService`, [auth], ctrl.dispoUserWithNoService);
 
 /**
  * @swagger
@@ -163,7 +163,7 @@ router.get(`${route}/dispoUserWithNoService`, ctrl.dispoUserWithNoService);
  *       404:
  *         description: Horaire non trouvé
  */
-router.get(`${route}/employe/:id`, ctrl.findByEmp);
+router.get(`${route}/employe/:id`, [auth], ctrl.findByEmp);
 
 /**
  * @swagger
@@ -183,7 +183,7 @@ router.get(`${route}/employe/:id`, ctrl.findByEmp);
  *       404:
  *         description: Horaire non trouvé
  */
-router.get(`${route}/:id`, ctrl.findOne);
+router.get(`${route}/:id`, [auth], ctrl.findOne);
 /**
  * @swagger
  * /api/beauty/horaires/{id}:
@@ -219,7 +219,7 @@ router.get(`${route}/:id`, ctrl.findOne);
  *       200:
  *         description: L'horaire mis à jour
  */
-router.put(`${route}/:id`, ctrl.update);
+router.put(`${route}/:id`, [auth], ctrl.update);
 /**
  * @swagger
  * /api/beauty/horaire/{id}:
@@ -236,7 +236,7 @@ router.put(`${route}/:id`, ctrl.update);
  *       200:
  *         description: Message de confirmation de suppression
  */
-router.delete(`${route}/:id`, ctrl.delete);
+router.delete(`${route}/:id`, [auth], ctrl.delete);
 
 
 

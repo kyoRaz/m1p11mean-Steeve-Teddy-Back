@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const ctrl = require('../controller/rdvDetail.controller');
-
+const { auth } = require('../helpers/auth');
 
 let route = '/rdvDetails';
 
@@ -41,7 +41,7 @@ let route = '/rdvDetails';
  *       400:
  *         description: Données fournies invalides ou incomplètes
  */
-router.post(`${route}`, ctrl.create);
+router.post(`${route}`, [auth], ctrl.create);
 
 /**
  * @swagger
@@ -53,7 +53,7 @@ router.post(`${route}`, ctrl.create);
  *       200:
  *         description: Liste récupérée avec succès
  */
-router.get(`${route}`, ctrl.findAll);
+router.get(`${route}`, [auth], ctrl.findAll);
 /**
  * @swagger
  * /api/beauty/rdvDetails/filtre:
@@ -81,7 +81,7 @@ router.get(`${route}`, ctrl.findAll);
  *       404:
  *         description: Aucun détail trouvé pour cet intervalle
  */
-router.get(`${route}/filtre`, ctrl.findIntervale);
+router.get(`${route}/filtre`, [auth], ctrl.findIntervale);
 
 /**
  * @swagger
@@ -102,7 +102,7 @@ router.get(`${route}/filtre`, ctrl.findIntervale);
  *       404:
  *         description: Détail de rendez-vous non trouvé
  */
-router.get(`${route}/:id`, ctrl.findOne);
+router.get(`${route}/:id`, [auth], ctrl.findOne);
 
 /**
  * @swagger
@@ -123,7 +123,7 @@ router.get(`${route}/:id`, ctrl.findOne);
  *       404:
  *         description: Détail de rendez-vous non trouvé
  */
-router.get(`${route}/historique/:idUser`, ctrl.historiqueRdvUser);
+router.get(`${route}/historique/:idUser`, [auth], ctrl.historiqueRdvUser);
 
 /**
  * @swagger
@@ -144,7 +144,7 @@ router.get(`${route}/historique/:idUser`, ctrl.historiqueRdvUser);
  *       404:
  *         description: 
  */
-router.get(`${route}/commission/:idEmploye`, ctrl.commissionObtenuEmploye);
+router.get(`${route}/commission/:idEmploye`, [auth], ctrl.commissionObtenuEmploye);
 
 /**
  * @swagger
@@ -179,7 +179,7 @@ router.get(`${route}/commission/:idEmploye`, ctrl.commissionObtenuEmploye);
  *       200:
  *         description: Détail de rendez-vous mis à jour avec succès
  */
-router.put(`${route}/:id`, ctrl.update);
+router.put(`${route}/:id`, [auth], ctrl.update);
 /**
  * @swagger
  * /api/beauty/rdvDetails/{id}:
@@ -197,6 +197,6 @@ router.put(`${route}/:id`, ctrl.update);
  *       200:
  *         description: Détail de rendez-vous supprimé avec succès
  */
-router.delete(`${route}/:id`, ctrl.delete);
+router.delete(`${route}/:id`, [auth], ctrl.delete);
 
 module.exports = router;
