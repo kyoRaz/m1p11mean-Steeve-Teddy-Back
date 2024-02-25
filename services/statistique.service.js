@@ -402,7 +402,9 @@ const chiffreDAffaireParMois = async (year) => {
 
 const getDaysBetweenDates = (startDate, endDate) => {
     const days = [];
-    const currentDate = new Date(startDate);
+    const dateString = startDate.toISOString().split('T')[0];
+    const currentDate = new Date(dateString);
+    
 
     while (currentDate <= endDate) {
         days.push(new Date(currentDate));
