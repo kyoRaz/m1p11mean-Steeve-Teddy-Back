@@ -18,7 +18,7 @@ const create = async (data) => {
 const createDetail = async (idRdv, detail, session) => {
     try {
         const service = await Service.findById(detail.idService);
-        if(!service){
+        if (!service) {
             throw new ValidationError("Service non trouvé")
         }
 
@@ -316,6 +316,53 @@ const findByIdRDV = async (id) => {
     }
 }
 
+const getTacheEffectue = async (idEmploye, start, end) => {
+    try {
+
+        let matchCondition = {
+            idEmploye: new mongoose.Types.ObjectId(idEmploye),
+            statusService: "Fini"
+        };
+
+        if (start && end) {
+            matchCondition["rdvInfo.dateRdv"] = { $gte: new Date(start), $lte: new Date(end) };
+        } else if (start) {
+            matchCondition["rdvInfo.dateRdv"] = { $gte: new Date(start) };
+        } else if (end) {
+            matchCondition["rdvInfo.dateRdv"] = { $lte: new Date(end) };
+        }
+
+        let result = await RdvDetail.aggregate(
+            [
+                {
+                    $lookup: {
+                        from: "rdvs",
+                        localField: "idRdv",
+                        foreignField: "_id",
+                        as: "rdvInfo"
+                    }
+                },
+                { $unwind: "$rdvInfo" },
+                {
+                    $match: matchCondition
+                },
+                {
+                    $addFields: {
+                        dateRdv: "$rdvInfo.dateRdv"
+                    }
+                },
+                {
+                    $sort: { dateRdv: -1 }
+                }
+            ]
+        );
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
+
+
 
 
 
@@ -330,5 +377,6 @@ module.exports = {
     findAvailableUsers,
     historiqueRdvUsers,
     commissionObtenuEmploye,
-    findByIdRDV
+    findByIdRDV,
+    getTacheEffectue
 }

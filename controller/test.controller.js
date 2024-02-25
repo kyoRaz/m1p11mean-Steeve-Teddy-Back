@@ -1,5 +1,6 @@
 const mailService = require('../services/mail.service');
 const rdvService = require('../services/rdv.service');
+const rdvDetailService = require('../services/rdvDetail.service');
 
 exports.sendMail = async (req, res) => {
     try {
@@ -31,4 +32,18 @@ exports.getRDVProche = async (req, res) => {
     }
 }
 
+exports.getTacheEffectuer = async (req, res) => {
+    try {
+        let { id, debut, fin } = req.query;
 
+        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!debut || !fin || !dateRegex.test(debut) || !dateRegex.test(fin)) {
+            return res.status(400).json({ message: "Les dates doivent être au format YYYY-MM-DD et ne peuvent pas être vides." });
+        }
+        let list = await rdvDetailService.getTacheEffectue(id, debut, fin);
+        return res.status(200).json(list);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}

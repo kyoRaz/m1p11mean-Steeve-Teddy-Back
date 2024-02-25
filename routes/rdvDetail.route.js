@@ -85,6 +85,42 @@ router.get(`${route}/filtre`, ctrl.findIntervale);
 
 /**
  * @swagger
+ * /api/beauty/rdvDetails/done/{idUser}:
+ *   get:
+ *     summary: Récupère les tâches effectuées par un utilisateur entre deux dates.
+ *     tags: [Tâches]
+ *     parameters:
+ *       - in: path
+ *         name: idUser
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: L'ID de l'utilisateur
+ *       - in: query
+ *         name: debut
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Date de début au format YYYY-MM-DD
+ *       - in: query
+ *         name: fin
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Date de fin au format YYYY-MM-DD
+ *     responses:
+ *       200:
+ *         description: Une liste des tâches effectuées.
+ *       400:
+ *         description: Les dates doivent être au format YYYY-MM-DD et ne peuvent pas être vides.
+ *       500:
+ *         description: Erreur serveur.
+ */
+
+router.get(`${route}/done/:id`, ctrl.delete);
+
+/**
+ * @swagger
  * /api/beauty/rdvDetails/{id}:
  *   get:
  *     summary: Trouve un détail de rendez-vous par son ID
@@ -198,5 +234,8 @@ router.put(`${route}/:id`, ctrl.update);
  *         description: Détail de rendez-vous supprimé avec succès
  */
 router.delete(`${route}/:id`, ctrl.delete);
+
+
+
 
 module.exports = router;
