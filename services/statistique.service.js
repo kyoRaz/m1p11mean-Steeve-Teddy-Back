@@ -21,7 +21,7 @@ const nombreReservationParJour = async (startDate, endDate, estActif = true) => 
         
         if (!endDate) {
             const currentDate = new Date();
-            endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0); 
+            endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1); 
         }else{
             endDate = new Date(endDate);
         }
@@ -177,110 +177,126 @@ const beneficeParMoisIncluantDepense = async (year) => {
 const tempsTravailMoyenParEmploye = async (dateDebut, dateFin) => {
     try{
         
-        const dateCourante = new Date();
-        dateCourante.setHours(0, 0, 0, 0); 
-        const jourCourant = dateCourante.getDay(); // Obtenez le jour de la semaine actuel (0 pour dimanche, 1 pour lundi, ..., 6 pour samedi)
+        // const dateCourante = new Date();
+        // dateCourante.setHours(0, 0, 0, 0); 
+        // const jourCourant = dateCourante.getDay(); // Obtenez le jour de la semaine actuel (0 pour dimanche, 1 pour lundi, ..., 6 pour samedi)
 
-        // Pour obtenir le début de la semaine courante (lundi précédent)
-        const debutSemaineCourante = new Date(dateCourante);
-        debutSemaineCourante.setDate(debutSemaineCourante.getDate() - ((jourCourant + 6) % 7 - 1)); // Soustrayez le nombre de jours pour atteindre le lundi
-        debutSemaineCourante.setHours(0, 0, 0, 0); // Définissez l'heure à 00:00:00
+        // // Pour obtenir le début de la semaine courante (lundi précédent)
+        // const debutSemaineCourante = new Date(dateCourante);
+        // debutSemaineCourante.setDate(debutSemaineCourante.getDate() - ((jourCourant + 6) % 7 - 1)); // Soustrayez le nombre de jours pour atteindre le lundi
+        // debutSemaineCourante.setHours(0, 0, 0, 0); // Définissez l'heure à 00:00:00
 
-        // Pour obtenir la fin de la semaine courante (dimanche suivant)
-        const finSemaineCourante = new Date(debutSemaineCourante);
-        finSemaineCourante.setDate(finSemaineCourante.getDate() + 6); // Ajoutez 6 jours pour atteindre le dimanche
-        finSemaineCourante.setHours(0, 0, 0, 0); 
+        // // Pour obtenir la fin de la semaine courante (dimanche suivant)
+        // const finSemaineCourante = new Date(debutSemaineCourante);
+        // finSemaineCourante.setDate(finSemaineCourante.getDate() + 6); // Ajoutez 6 jours pour atteindre le dimanche
+        // finSemaineCourante.setHours(0, 0, 0, 0); 
 
-        const date1 = dateDebut || debutSemaineCourante;
-        const date2 = dateFin || finSemaineCourante;
+        // const date1 = dateDebut || debutSemaineCourante;
+        // const date2 = dateFin || finSemaineCourante;
         
-        const tempsTravails = await RdvDetail.aggregate([
-            {
-                $lookup: {
-                    from: "rdvs",
-                    localField: "idRdv",
-                    foreignField: "_id",
-                    as: "rdv_info"
-                }
-            },
-            {
-                $unwind: "$rdv_info"
-            },
-            {
-                $match: {
-                    $and: [
-                        { "rdv_info.dateRdv": { $gte: date1 } },
-                        { "rdv_info.dateRdv": { $lte: date2 } }
-                    ]
-                }
-            },
-            {
-                $lookup: {
-                    from: "utilisateurs",
-                    localField: "idEmploye",
-                    foreignField: "_id",
-                    as: "employes"
-                }
-            },
-            {
-                $unwind: "$employes"
-            },
-            {
-                $group: {
-                    _id: "$idEmploye",
-                    nom: { $first: "$employes.nom" }, // Prendre le nom de l'employé (le même pour tous les rendez-vous groupés)
-                    prenom: { $first: "$employes.prenom" },
-                    totalServiceTime: {
-                        $sum: {
-                            $subtract: [
-                                {
-                                    $add: [
-                                        { $multiply: [{ $toInt: { $substrCP: ["$finService", 0, 2] } }, 60] }, // Heures en minutes
-                                        { $toInt: { $substrCP: ["$finService", 3, 2] } } // Minutes
-                                    ]
-                                },
-                                {
-                                    $add: [
-                                        { $multiply: [{ $toInt: { $substrCP: ["$debutService", 0, 2] } }, 60] }, // Heures en minutes
-                                        { $toInt: { $substrCP: ["$debutService", 3, 2] } } // Minutes
-                                    ]
-                                }
-                            ]
-                        } 
-                    },
-                    count: { $sum: 1 } // Nombre total de rendez-vous par employé (peut être utile pour la moyenne)
-                }
-            },
+        // const tempsTravails = await RdvDetail.aggregate([
+        //     {
+        //         $lookup: {
+        //             from: "rdvs",
+        //             localField: "idRdv",
+        //             foreignField: "_id",
+        //             as: "rdv_info"
+        //         }
+        //     },
+        //     {
+        //         $unwind: "$rdv_info"
+        //     },
+        //     {
+        //         $match: {
+        //             $and: [
+        //                 { "rdv_info.dateRdv": { $gte: date1 } },
+        //                 { "rdv_info.dateRdv": { $lte: date2 } }
+        //             ]
+        //         }
+        //     },
+        //     {
+        //         $lookup: {
+        //             from: "utilisateurs",
+        //             localField: "idEmploye",
+        //             foreignField: "_id",
+        //             as: "employes"
+        //         }
+        //     },
+        //     {
+        //         $unwind: "$employes"
+        //     },
+        //     {
+        //         $group: {
+        //             _id: "$idEmploye",
+        //             nom: { $first: "$employes.nom" }, // Prendre le nom de l'employé (le même pour tous les rendez-vous groupés)
+        //             prenom: { $first: "$employes.prenom" },
+        //             totalServiceTime: {
+        //                 $sum: {
+        //                     $subtract: [
+        //                         {
+        //                             $add: [
+        //                                 { $multiply: [{ $toInt: { $substrCP: ["$finService", 0, 2] } }, 60] }, // Heures en minutes
+        //                                 { $toInt: { $substrCP: ["$finService", 3, 2] } } // Minutes
+        //                             ]
+        //                         },
+        //                         {
+        //                             $add: [
+        //                                 { $multiply: [{ $toInt: { $substrCP: ["$debutService", 0, 2] } }, 60] }, // Heures en minutes
+        //                                 { $toInt: { $substrCP: ["$debutService", 3, 2] } } // Minutes
+        //                             ]
+        //                         }
+        //                     ]
+        //                 } 
+        //             },
+        //             count: { $sum: 1 } // Nombre total de rendez-vous par employé (peut être utile pour la moyenne)
+        //         }
+        //     },
             
-            {
-                $project: {
-                    _id: 0,
-                    idEmploye: "$_id",
-                    nomEmploye: "$nom",
-                    prenomEmploye: "$prenom",
-                    avgServiceTime: { $divide: ["$totalServiceTime", "$count"] } // Calculer la moyenne
-                }
-            }
-        ]);
-        // Obtenez la liste complète des employés depuis la collection 'utilisateurs'
+        //     {
+        //         $project: {
+        //             _id: 0,
+        //             idEmploye: "$_id",
+        //             nomEmploye: "$nom",
+        //             prenomEmploye: "$prenom",
+        //             avgServiceTime: { $divide: ["$totalServiceTime", "$count"] } // Calculer la moyenne
+        //         }
+        //     }
+        // ]);
+        // // Obtenez la liste complète des employés depuis la collection 'utilisateurs'
+        // const employes = await Utilisateur.find({roleId: process.env.ROLE_EMPLOYE}, { _id: 1, nom: 1, prenom: 1 });
+        // const data = {
+        //     labels: [],
+        //     data: {
+        //         tempsTravailMinute: [],
+        //         tempsTravailHeure: []
+        //     }
+        // };
+        
+        // employes.map(employe => {
+        //     const tempsTravail = tempsTravails.find(entry => entry.idEmploye.toString() === employe._id.toString());
+            
+        //     data.labels.push(employe.nom+" "+employe.prenom);
+        //     data.data.tempsTravailMinute.push(tempsTravail?.avgServiceTime ? tempsTravail?.avgServiceTime : 0);
+        //     data.data.tempsTravailHeure.push(tempsTravail?.avgServiceTime ? tempsTravail?.avgServiceTime/60 : 0);
+            
+        // });
+
         const employes = await Utilisateur.find({roleId: process.env.ROLE_EMPLOYE}, { _id: 1, nom: 1, prenom: 1 });
+
         const data = {
             labels: [],
-            data: {
-                tempsTravailMinute: [],
-                tempsTravailHeure: []
-            }
+            data: []
         };
         
-        employes.map(employe => {
-            const tempsTravail = tempsTravails.find(entry => entry.idEmploye.toString() === employe._id.toString());
-            
-            data.labels.push(employe.nom+" "+employe.prenom);
-            data.data.tempsTravailMinute.push(tempsTravail?.avgServiceTime ? tempsTravail?.avgServiceTime : 0);
-            data.data.tempsTravailHeure.push(tempsTravail?.avgServiceTime ? tempsTravail?.avgServiceTime/60 : 0);
-            
-        });
-
+        
+        for (let employe of employes){
+            const result = await tempsTravailMoyenDUnEmploye(dateDebut,dateFin,employe?._id?.toString());
+            data.labels = result?.labels;
+            data.data.push({
+                name: employe.nom+" "+employe.prenom,
+                data: result?.data?.tempsTravailHeure
+            })
+        };
         return data;
     }catch(error){
         throw error;
@@ -301,7 +317,7 @@ const chiffreDAffaireParJour = async (startDate, endDate) => {
         
         if (!endDate) {
             const currentDate = new Date();
-            endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0); 
+            endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1); 
         }else{
             endDate = new Date(endDate);
         }
