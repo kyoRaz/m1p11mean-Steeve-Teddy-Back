@@ -44,23 +44,20 @@ const nombreReservationParJour = async (startDate, endDate, estActif = true) => 
         ]);
 
 
-        const allDates = [];
-        let currentDate = new Date(startDate);
-        while (currentDate <= endDate) {
-            allDates.push(new Date(currentDate));
-            currentDate.setDate(currentDate.getDate() + 1);
-        }
+        const data = {
+            labels: [],
+            data: []
+        };
 
-        const result = allDates.map(date => {
+        const allDates = getDaysBetweenDates(startDate,endDate);
+        allDates.map(date => {
             const dateString = date.toISOString().split('T')[0];
             const reservation = reservationsCount.find(entry => entry._id === dateString);
-            return {
-                date: dateString,
-                count: reservation ? reservation.count : 0
-            };
+            data.labels.push(dateString),
+            data.data.push(reservation?.count ? reservation.count : 0)
         });
 
-        return result;
+        return data;
     } catch (error) {
         throw error;
     }
@@ -97,17 +94,21 @@ const nombreReservationParMois = async (year,estActif = true) => {
             }
         ]);
 
-        
-        const formattedData = months.map(monthDate => {
+        const data = {
+            labels: [],
+            data: []
+        };
+        months.map(monthDate => {
             const month = monthDate.getMonth() + 1; // Ajouter 1 car les mois sont à base zéro
             const year = monthDate.getFullYear();
             const monthName = monthDate.toLocaleDateString('fr-FR', { month: 'long' }); // Nom du mois en français
             const reservation = reservationsCount.find(entry => entry._id.month === month && entry._id.year === year);
             const count = reservation ? reservation.count : 0;
-            return { year, month, monthName, count };
+            data.labels.push(monthName);
+            data.data.push(count);
         });
 
-        return formattedData;
+        return data;
 
     } catch (error) {
         throw error;
@@ -305,7 +306,7 @@ const tempsTravailMoyenParEmploye = async (dateDebut, dateFin) => {
 
 const chiffreDAffaireParJour = async (startDate, endDate) => { 
     try {
-        let query = {};
+        let query = {etat: 11};
 
         if (!startDate) {
             const currentDate = new Date();
@@ -322,7 +323,7 @@ const chiffreDAffaireParJour = async (startDate, endDate) => {
             endDate = new Date(endDate);
         }
 
-        query.dateRdv = { $gte: startDate, $lte: endDate };
+        query.date = { $gte: startDate, $lte: endDate };
         const chiffreAffaireCount = await Paiement.aggregate([
             {
                 $match: query
@@ -337,7 +338,8 @@ const chiffreDAffaireParJour = async (startDate, endDate) => {
                 $sort: { "_id": 1 } 
             }
         ]);
-
+        console.log("chiffreAffaireCount")
+        console.log(chiffreAffaireCount)
 
         const allDates = [];
         let currentDate = new Date(startDate);
@@ -346,16 +348,21 @@ const chiffreDAffaireParJour = async (startDate, endDate) => {
             currentDate.setDate(currentDate.getDate() + 1);
         }
 
-        const result = allDates.map(date => {
+        const data = {
+            labels: [],
+            data: []
+        };
+
+        allDates.map(date => {
             const dateString = date.toISOString().split('T')[0];
             const chiffreAffaire = chiffreAffaireCount.find(entry => entry._id === dateString);
-            return {
-                date: dateString,
-                chiffreAffaire: chiffreAffaire ? chiffreAffaire.chiffreAffaire : 0
-            };
+            
+            data.labels.push(dateString);
+            data.data.push(chiffreAffaire?.chiffreAffaire ? chiffreAffaire.chiffreAffaire : 0);
+            
         });
 
-        return result;
+        return data;
     } catch (error) {
         throw error;
     }
@@ -370,10 +377,11 @@ const chiffreDAffaireParMois = async (year) => {
         const dateDebut = new Date(year, 0, 1);
         const dateFin = new Date(year, 11, 31);
 
-        const chiffreAffaires = await Caisse.aggregate([
+        const chiffreAffaires = await Paiement.aggregate([
             {
                 $match: {
-                    date: { $gte: dateDebut, $lte: dateFin }
+                    date: { $gte: dateDebut, $lte: dateFin },
+                    etat: 11
                 }
             },
             {
@@ -399,17 +407,23 @@ const chiffreDAffaireParMois = async (year) => {
             months.push(new Date(year, month, 1));
         }
 
-        const formattedData = months.map(monthDate => {
+        const data = {
+            labels: [],
+            data: []
+        };
+
+        months.map(monthDate => {
             const month = monthDate.getMonth() + 1; // Ajouter 1 car les mois sont à base zéro
             const year = monthDate.getFullYear();
             const monthName = monthDate.toLocaleDateString('fr-FR', { month: 'long' }); // Nom du mois en français
             const chiffreAffaireEntry = chiffreAffaires.find(entry => entry.year === year && entry.month === month);
             const chiffreAffaire = chiffreAffaireEntry ? chiffreAffaireEntry.chiffreAffaire : 0;
-            return { year, month, monthName, chiffreAffaire};
+            data.labels.push(monthName);
+            data.data.push(chiffreAffaire);
         });
 
 
-        return formattedData;
+        return data;
     }catch(error){
         throw error;
     }

@@ -177,7 +177,7 @@ function convertTimeToHHMMSS(timeStr) {
 }
 
 function completeTimeFormat(timeString) {
-    const parts = timeString.split(":");
+    const parts = timeString?.split(":");
     let hour = parts[0].padStart(2, "0");
     let minute = "00";
     let second = "00";
