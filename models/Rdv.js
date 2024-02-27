@@ -7,6 +7,7 @@ const rdvSchema = new Schema({
     dateRdv: { type: Date, required: true },
     heureRdv: { type: String, required: true },
     estActif: { type: Boolean, default: true },
+    isPaid: {type: Boolean,default: false}
 });
 
 module.exports = mongoose.model('rdv', rdvSchema);
