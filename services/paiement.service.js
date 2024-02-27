@@ -7,6 +7,10 @@ const { ValidationError } = require('../helpers/ValidationError');
 // Create
 const createPaiement = async (data) => {
     try {
+        const {montant} = data;
+        if(montant<=0) {
+            throw new ValidationError("Veuillez insérer un montant strictement positif");
+        }
         const paiement = await Paiement.create(data); 
         let dataRdv = {isPaid: true};
         await Rdv.findByIdAndUpdate(paiement?.idrdv,dataRdv);
