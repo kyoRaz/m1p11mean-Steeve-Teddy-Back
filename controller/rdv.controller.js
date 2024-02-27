@@ -211,6 +211,17 @@ exports.delete = async (req, res) => {
     }
 }
 
+exports.payerRdv = async (req, res) => {
+    try {
+        let id = req.params.id;
+        await rdvService.payerRdv(id);
+        return res.status(200).json({ message: "suppression effectué" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
+
 exports.historiqueRdvUser = async (req, res) => {
     try {
         // let user = req?.user;

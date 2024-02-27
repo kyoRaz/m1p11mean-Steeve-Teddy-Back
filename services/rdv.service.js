@@ -2,6 +2,8 @@ const Rdv = require('../models/Rdv');
 const RdvDetail = require('../models/RdvDetail');
 const { startSession } = require('mongoose');
 const rdvDetailService = require('./rdvDetail.service');
+const paiementService = require('./paiement.service');
+const mongoose = require('mongoose');
 
 const create = async (data) => {
     try {
@@ -104,6 +106,18 @@ const findById = async (id) => {
 
 const findDetails = async (idRdv) => {
     try {
+        const detail = await RdvDetail.aggregate([
+            {
+                $match: { idRdv: new mongoose.Types.ObjectId(idRdv) } // Filtrer les rendez-vous selon l'idRdv donné
+            },
+            {
+                $group: {
+                    _id: "$idRdv", // Grouper par idRdv
+                    totalPrix: { $sum: "$prixService" } // Calculer la somme des prix pour chaque idRdv
+                }
+            }
+        ]).exec();
+        console.log(detail)
         let list = await RdvDetail.find({idRdv})
             .populate({
                 path: 'idService',
@@ -113,7 +127,7 @@ const findDetails = async (idRdv) => {
                 path: "idEmploye",
                 select: "_id nom prenom"
             });
-        return list;
+        return { list: list, total : detail[0]?.totalPrix ? detail[0]?.totalPrix : 0 };
     } catch (error) {
         throw error;
     }
@@ -230,7 +244,23 @@ const historiqueRdv = async (idUser,page,limit,dateDebut,dateFin) => {
 
 const payerRdv = async (idRdv) => {
     try {
-        
+        const detail = await RdvDetail.aggregate([
+            {
+                $match: { idRdv: new mongoose.Types.ObjectId(idRdv) } // Filtrer les rendez-vous selon l'idRdv donné
+            },
+            {
+                $group: {
+                    _id: "$idRdv", // Grouper par idRdv
+                    totalPrix: { $sum: "$prixService" } // Calculer la somme des prix pour chaque idRdv
+                }
+            }
+        ]);
+        const data = {
+            montant : detail[0]?.totalPrix ? detail[0]?.totalPrix : 0,
+            idrdv: idRdv
+        }
+        const paiement = await paiementService.createPaiement(data);
+        return paiement;
     } catch (error) {
         throw error;
     }
