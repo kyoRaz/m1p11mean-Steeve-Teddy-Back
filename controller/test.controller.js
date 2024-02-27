@@ -24,7 +24,7 @@ exports.sendMailRappel = async (req, res) => {
 
 exports.getRDVProche = async (req, res) => {
     try {
-        let list = await rdvService.getRDVProche();
+        let list = await r  dvService.getRDVProche();
         return res.status(200).json(list);
     } catch (error) {
         console.log(error);
