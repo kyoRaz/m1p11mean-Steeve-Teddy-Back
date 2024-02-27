@@ -10,5 +10,6 @@ router.get(`${route}/beneficeParMoisIncluantDepense`, ctrl.beneficeParMoisInclua
 router.get(`${route}/tempsTravailMoyenParEmploye`, ctrl.tempsTravailMoyenParEmploye);
 router.get(`${route}/chiffreDAffaireParMois`, ctrl.chiffreDAffaireParMois);
 router.get(`${route}/chiffreDAffaireParJour`, ctrl.chiffreDAffaireParJour);
+router.get(`${route}/tempsTravailMoyenDUnEmploye`, ctrl.tempsTravailMoyenDUnEmploye);
 
 module.exports = router

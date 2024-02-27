@@ -66,8 +66,9 @@ const findById = async (id) => {
 
 const update = async (id, data) => {
     try {
-        data.debutService = completeTimeFormat(detail.debutService);
-        data.finService = completeTimeFormat(detail.finService);
+        const rdvDetails = await RdvDetail.findById(id);
+        data.debutService = completeTimeFormat(rdvDetails.debutService);
+        data.finService = completeTimeFormat(rdvDetails.finService);
         const update = {
             $set: data
         };

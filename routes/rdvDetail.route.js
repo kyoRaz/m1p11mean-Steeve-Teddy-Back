@@ -235,7 +235,63 @@ router.put(`${route}/:id`, ctrl.update);
  */
 router.delete(`${route}/:id`, ctrl.delete);
 
+/**
+ * @swagger
+ * /api/beauty/rdvDetails/commencer/{id}:
+ *   put:
+ *     summary: Commencer un rendez-vous details
+ *     description: Commencer un rendez-vous details.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: L'ID du rendez-vous detailss
+ *     responses:
+ *       200:
+ *         description: Rendez-vous commencé avec succès.
+ */
+router.put(`${route}/commencer/:id`, ctrl.commencerRdv);
 
+/**
+ * @swagger
+ * /api/beauty/rdvDetails/annuler/{id}:
+ *   put:
+ *     summary: Annuler un rendez-vous details
+ *     description: Annuler un rendez-vous details.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: L'ID du rendez-vous details
+ *     responses:
+ *       200:
+ *         description: Rendez-vous annulé avec succès.
+ */
+router.put(`${route}/annuler/:id`, ctrl.annulerRdv);
+
+
+/**
+ * @swagger
+ * /api/beauty/rdvDetails/terminer/{id}:
+ *   put:
+ *     summary: Terminer un rendez-vous details
+ *     description: Terminer un rendez-vous details.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: L'ID du rendez-vous details
+ *     responses:
+ *       200:
+ *         description: Rendez-vous terminé avec succès.
+ */
+router.put(`${route}/terminer/:id`, ctrl.finirRdv);
 
 
 module.exports = router;
