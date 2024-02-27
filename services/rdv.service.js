@@ -228,6 +228,14 @@ const historiqueRdv = async (idUser,page,limit,dateDebut,dateFin) => {
     }
 }
 
+const payerRdv = async (idRdv) => {
+    try {
+        
+    } catch (error) {
+        throw error;
+    }
+}
+
 
 module.exports = {
     create,
@@ -239,5 +247,6 @@ module.exports = {
     createRdvandDetail,
     getRDVProche,
     historiqueRdv,
-    findDetails
+    findDetails,
+    payerRdv
 }
