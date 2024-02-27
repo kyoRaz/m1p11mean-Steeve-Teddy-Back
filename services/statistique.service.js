@@ -154,8 +154,16 @@ const beneficeParMoisIncluantDepense = async (year) => {
         for (let month = 0; month < 12; month++) {
             months.push(new Date(year, month, 1));
         }
+
+        let data = {
+            labels: [],
+            data: []
+        }
+        let benefices = []
+        let revenues = []
+        let depenses = []
     
-        const formattedData = months.map(monthDate => {
+        months.map(monthDate => {
             const month = monthDate.getMonth() + 1; // Ajouter 1 car les mois sont à base zéro
             const year = monthDate.getFullYear();
             const monthName = monthDate.toLocaleDateString('fr-FR', { month: 'long' }); // Nom du mois en français
@@ -163,11 +171,25 @@ const beneficeParMoisIncluantDepense = async (year) => {
             const benefice = profitEntry ? profitEntry.benefice : 0;
             const totalEntree = profitEntry ? profitEntry.totalEntree : 0;
             const totalSortie = profitEntry ? profitEntry.totalSortie : 0;
-            return { year, month, monthName, benefice, totalEntree, totalSortie };
+            data.labels.push(monthName);
+            benefices.push(benefice);
+            revenues.push(totalEntree);
+            depenses.push(totalSortie);
         });
+        data.data.push({
+            name: "Bénéfice",
+            data: benefices
+        })
+        data.data.push({
+            name: "Revenue",
+            data: revenues
+        })
+        data.data.push({
+            name: "Dépense",
+            data: depenses
+        })
     
-    
-        return formattedData;
+        return data;
     }catch(error){
         throw error;
     }
