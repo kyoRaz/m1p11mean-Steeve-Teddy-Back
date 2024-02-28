@@ -221,6 +221,8 @@ const historiqueRdvUsers = async (idUser, page, limit) => {
     }
 }
 
+
+
 const commissionObtenuEmploye = async (idEmploye, date) => {
     try {
         const result = await RdvDetail.aggregate([
@@ -400,7 +402,102 @@ const getTacheEffectue = async (idEmploye, start, end, page = 1, pageSize = 10) 
 };
 
 
+const rdvEmployes = async (idEmploye, page, limit,date,status) => {
+    try {
+        if (!page) {
+            page = 1;
+        } else {
+            page = parseInt(page);
+        }
+        if (!limit) {
+            limit = 10;
+        } else {
+            limit = parseInt(limit);
+        }
 
+        if(!date){
+            date = new Date();
+        }else{
+            date = new Date(date);
+        }
+        let filtre = {
+            idEmploye: new mongoose.Types.ObjectId(idEmploye),
+            "rdvDetails.dateRdv" : date
+        }
+        if(status){
+            filtre.statusService = status;
+        }
+
+        
+        const skipIndex = (page - 1) * limit;
+        const historique = await RdvDetail.aggregate([
+            {
+                // Effectuez une jointure avec la collection 'rdv' pour obtenir les informations sur le rendez-vous
+                $lookup: {
+                    from: "rdvs",
+                    localField: "idRdv",
+                    foreignField: '_id',
+                    as: "rdvDetails"
+                }
+            },
+            // Déroulez le tableau 'rdvDetails' pour obtenir les détails de rendez-vous
+            { $unwind: '$rdvDetails' },
+            // Filtrez les rendez-vous pour l'utilisateur donné
+            { $match: filtre
+            },
+            {
+                $lookup: {
+                    from: 'services',
+                    localField: 'idService',
+                    foreignField: '_id',
+                    as: 'serviceDetails'
+                }
+            },
+            // Déroulez le tableau 'serviceDetails' pour obtenir les détails du service
+            { $unwind: '$serviceDetails' },
+            {
+                $lookup: {
+                    from: 'utilisateurs',
+                    localField: 'rdvDetails.idUser',
+                    foreignField: '_id',
+                    as: 'utilisateurDetails'
+                }
+            },
+            // Déroulez le tableau 'serviceDetails' pour obtenir les détails du service
+            { $unwind: '$utilisateurDetails' },
+            { $sort: { debutService: -1 } },
+            {
+                $project: {
+                    _id: 1,
+                    dateRdv: "$rdvDetails.dateRdv",
+                    debutService: 1,
+                    finService: 1,
+                    statusService: 1,
+                    service: {
+                        id: '$serviceDetails._id',
+                        nom: '$serviceDetails.nom',
+                        delai: '$serviceDetails.delai',
+                        prix: '$serviceDetails.prix',
+                    },
+                    utilisateur: {
+                        id: "$utilisateurDetails._id",
+                        nom: "$utilisateurDetails.nom",
+                        prenom: "$utilisateurDetails.prenom"
+                    },
+                }
+            },
+            // Pagination
+            { $skip: skipIndex }, // sauter les premiers résultats
+            { $limit: limit }, // limiter le nombre de résultats retournés
+            
+        ]);
+        return historique;
+    } catch (error) {
+        throw error;
+    } finally {
+
+    }
+}
 
 module.exports = {
     create,
@@ -414,5 +511,6 @@ module.exports = {
     historiqueRdvUsers,
     commissionObtenuEmploye,
     findByIdRDV,
-    getTacheEffectue
+    getTacheEffectue,
+    rdvEmployes
 }

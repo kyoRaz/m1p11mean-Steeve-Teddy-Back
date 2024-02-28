@@ -304,7 +304,8 @@ const tempsTravailMoyenParEmploye = async (dateDebut, dateFin) => {
             
         // });
 
-        const employes = await Utilisateur.find({roleId: process.env.ROLE_EMPLOYE}, { _id: 1, nom: 1, prenom: 1 });
+        const employes = await Utilisateur.find({roleId: process.env.ROLE_EMPLOYE,removed: false}, { _id: 1, nom: 1, prenom: 1,
+         });
 
         const data = {
             labels: [],
