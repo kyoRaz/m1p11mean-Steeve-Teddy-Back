@@ -41,8 +41,9 @@ exports.auth = async (req, res) => {
             }
 
             // Create a JWT
+            const secret = "amazing"
             let payload = { id: user._id };
-            const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
+            const token = jwt.sign(payload, secret, { expiresIn: '1d' });
             user = userService.withoutPassword(user);
             return res.status(200).json({
                 token,

@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const ctrl = require('../controller/rdv.controller');
-
+const { auth } = require('../helpers/auth');
 
 let route = '/rdvs';
 
@@ -28,7 +28,7 @@ let route = '/rdvs';
  *       400:
  *         description: Requête invalide, informations manquantes ou incorrectes.
  */
-router.post(`${route}`, ctrl.create);
+router.post(`${route}`, [auth], ctrl.create);
 
 /**
  * @swagger
@@ -77,7 +77,7 @@ router.post(`${route}`, ctrl.create);
  *       400:
  *         description: Données fournies invalides ou incomplètes.
  */
-router.post(`${route}/config`, ctrl.programmerRdv);
+router.post(`${route}/config`, [auth], ctrl.programmerRdv);
 /**
  * @swagger
  * /api/beauty/rdvs:
@@ -88,7 +88,7 @@ router.post(`${route}/config`, ctrl.programmerRdv);
  *       200:
  *         description: Liste des rendez-vous récupérée avec succès.
  */
-router.get(`${route}`, ctrl.findAll);
+router.get(`${route}`, [auth], ctrl.findAll);
 
 /**
  * @swagger
@@ -148,7 +148,7 @@ router.get(`${route}`, ctrl.findAll);
  *                 message:
  *                   type: string
  */
-router.get(`${route}/historique`, ctrl.historiqueRdvUser);
+router.get(`${route}/historique`, [auth], ctrl.historiqueRdvUser);
 
 /**
  * @swagger
@@ -193,7 +193,7 @@ router.get(`${route}/historique`, ctrl.historiqueRdvUser);
  *                   type: string
  */
 
-router.get(`${route}/historiqueDetail/:idRdv`, ctrl.findDetails);
+router.get(`${route}/historiqueDetail/:idRdv`, [auth], ctrl.findDetails);
 
 
 /**
@@ -215,7 +215,7 @@ router.get(`${route}/historiqueDetail/:idRdv`, ctrl.findDetails);
  *       404:
  *         description: Rendez-vous non trouvé.
  */
-router.get(`${route}/:id`, ctrl.findOne);
+router.get(`${route}/:id`, [auth], ctrl.findOne);
 
 
 /**
@@ -248,7 +248,7 @@ router.get(`${route}/:id`, ctrl.findOne);
  *       400:
  *         description: Requête invalide, informations manquantes ou incorrectes.
  */
-router.put(`${route}/:id`, ctrl.update);
+router.put(`${route}/:id`, [auth], ctrl.update);
 
 /**
  * @swagger
@@ -267,7 +267,7 @@ router.put(`${route}/:id`, ctrl.update);
  *       200:
  *         description: Rendez-vous supprimé avec succès.
  */
-router.delete(`${route}/:id`, ctrl.delete);
+router.delete(`${route}/:id`, [auth], ctrl.delete);
 
 /**
  * @swagger
@@ -289,6 +289,6 @@ router.delete(`${route}/:id`, ctrl.delete);
  *       400:
  *         description: Requête invalide, informations manquantes ou incorrectes.
  */
-router.post(`${route}/payer/:id`, ctrl.payerRdv);
+router.post(`${route}/payer/:id`, [auth], ctrl.payerRdv);
 
 module.exports = router;

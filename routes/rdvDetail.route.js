@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const ctrl = require('../controller/rdvDetail.controller');
-
+const { auth } = require('../helpers/auth');
 
 let route = '/rdvDetails';
 
@@ -41,7 +41,7 @@ let route = '/rdvDetails';
  *       400:
  *         description: Données fournies invalides ou incomplètes
  */
-router.post(`${route}`, ctrl.create);
+router.post(`${route}`, [auth], ctrl.create);
 
 /**
  * @swagger
@@ -53,7 +53,7 @@ router.post(`${route}`, ctrl.create);
  *       200:
  *         description: Liste récupérée avec succès
  */
-router.get(`${route}`, ctrl.findAll);
+router.get(`${route}`, [auth], ctrl.findAll);
 /**
  * @swagger
  * /api/beauty/rdvDetails/rdvEmployes:
@@ -104,7 +104,7 @@ router.get(`${route}`, ctrl.findAll);
  *       '500':
  *         description: Erreur serveur.
  */
-router.get(`${route}/rdvEmployeTous`, ctrl.rdvEmployes);
+router.get(`${route}/rdvEmployeTous`, [auth], ctrl.rdvEmployes);
 /**
  * @swagger
  * /api/beauty/rdvDetails/rdvEmployeFiniEtNouveau:
@@ -157,7 +157,7 @@ router.get(`${route}/rdvEmployeTous`, ctrl.rdvEmployes);
  *       '500':
  *         description: Erreur serveur.
  */
-router.get(`${route}/rdvEmployeFiniEtNouveau`, ctrl.rdvEmployesFiniEtNonCommence);
+router.get(`${route}/rdvEmployeFiniEtNouveau`, [auth], ctrl.rdvEmployesFiniEtNonCommence);
 /**
  * @swagger
  * /api/beauty/rdvDetails/filtre:
@@ -185,7 +185,7 @@ router.get(`${route}/rdvEmployeFiniEtNouveau`, ctrl.rdvEmployesFiniEtNonCommence
  *       404:
  *         description: Aucun détail trouvé pour cet intervalle
  */
-router.get(`${route}/filtre`, ctrl.findIntervale);
+router.get(`${route}/filtre`, [auth], ctrl.findIntervale);
 
 /**
  * @swagger
@@ -221,7 +221,7 @@ router.get(`${route}/filtre`, ctrl.findIntervale);
  *         description: Erreur serveur.
  */
 
-router.get(`${route}/done/:idUser`, ctrl.getTacheEffectuer);
+router.get(`${route}/done/:idUser`, [auth], ctrl.getTacheEffectuer);
 
 /**
  * @swagger
@@ -242,7 +242,7 @@ router.get(`${route}/done/:idUser`, ctrl.getTacheEffectuer);
  *       404:
  *         description: Détail de rendez-vous non trouvé
  */
-router.get(`${route}/:id`, ctrl.findOne);
+router.get(`${route}/:id`, [auth], ctrl.findOne);
 
 /**
  * @swagger
@@ -263,7 +263,7 @@ router.get(`${route}/:id`, ctrl.findOne);
  *       404:
  *         description: Détail de rendez-vous non trouvé
  */
-router.get(`${route}/historique/:idUser`, ctrl.historiqueRdvUser);
+router.get(`${route}/historique/:idUser`, [auth], ctrl.historiqueRdvUser);
 
 /**
  * @swagger
@@ -284,7 +284,7 @@ router.get(`${route}/historique/:idUser`, ctrl.historiqueRdvUser);
  *       404:
  *         description: 
  */
-router.get(`${route}/commission/:idEmploye`, ctrl.commissionObtenuEmploye);
+router.get(`${route}/commission/:idEmploye`, [auth], ctrl.commissionObtenuEmploye);
 
 /**
  * @swagger
@@ -319,7 +319,7 @@ router.get(`${route}/commission/:idEmploye`, ctrl.commissionObtenuEmploye);
  *       200:
  *         description: Détail de rendez-vous mis à jour avec succès
  */
-router.put(`${route}/:id`, ctrl.update);
+router.put(`${route}/:id`, [auth], ctrl.update);
 /**
  * @swagger
  * /api/beauty/rdvDetails/{id}:
@@ -337,7 +337,7 @@ router.put(`${route}/:id`, ctrl.update);
  *       200:
  *         description: Détail de rendez-vous supprimé avec succès
  */
-router.delete(`${route}/:id`, ctrl.delete);
+router.delete(`${route}/:id`, [auth], ctrl.delete);
 
 /**
  * @swagger
@@ -356,7 +356,7 @@ router.delete(`${route}/:id`, ctrl.delete);
  *       200:
  *         description: Rendez-vous commencé avec succès.
  */
-router.put(`${route}/commencer/:id`, ctrl.commencerRdv);
+router.put(`${route}/commencer/:id`, [auth], ctrl.commencerRdv);
 
 /**
  * @swagger
@@ -375,7 +375,7 @@ router.put(`${route}/commencer/:id`, ctrl.commencerRdv);
  *       200:
  *         description: Rendez-vous annulé avec succès.
  */
-router.put(`${route}/annuler/:id`, ctrl.annulerRdv);
+router.put(`${route}/annuler/:id`, [auth], ctrl.annulerRdv);
 
 
 /**
@@ -395,7 +395,7 @@ router.put(`${route}/annuler/:id`, ctrl.annulerRdv);
  *       200:
  *         description: Rendez-vous terminé avec succès.
  */
-router.put(`${route}/terminer/:id`, ctrl.finirRdv);
+router.put(`${route}/terminer/:id`, [auth], ctrl.finirRdv);
 
 
 

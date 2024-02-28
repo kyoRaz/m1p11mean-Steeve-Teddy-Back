@@ -163,7 +163,8 @@ exports.commissionObtenuEmploye = async (req, res) => {
 exports.update = async (req, res) => {
     try {
         let id = req.params.id;
-        let idUser = '65bf4a4ababc23a0ac0ce336';
+        let user = req.user;
+        let idUser = user?.id;
         let { dateRdv } = req.body;
 
         if (!dateRdv || !Date.parse(dateRdv)) {
@@ -268,10 +269,10 @@ exports.getTacheEffectuer = async (req, res) => {
     }
 };
 
-exports.rdvEmployes = async (req, res)=> {
-    try{
+exports.rdvEmployes = async (req, res) => {
+    try {
         const { idEmploye, date, page, limit } = req.query;
-        const result = await rdvDetailService.rdvEmployes(idEmploye,page,limit,date);
+        const result = await rdvDetailService.rdvEmployes(idEmploye, page, limit, date);
         return res.status(200).json({ size: result.length, resultat: result });
     } catch (error) {
         console.log(error);
@@ -279,12 +280,12 @@ exports.rdvEmployes = async (req, res)=> {
     }
 }
 
-exports.rdvEmployesFiniEtNonCommence = async (req, res)=> {
-    try{
+exports.rdvEmployesFiniEtNonCommence = async (req, res) => {
+    try {
         const { idEmploye, date, page, limit } = req.query;
-        const resultPasCommence = await rdvDetailService.rdvEmployes(idEmploye,page,limit,date,STATUT_RDV_NOUVEAU);
-        const resultFini = await rdvDetailService.rdvEmployes(idEmploye,page,limit,date,STATUT_RDV_FINI);
-        return res.status(200).json({ fini: resultFini, nouveau: resultPasCommence  });
+        const resultPasCommence = await rdvDetailService.rdvEmployes(idEmploye, page, limit, date, STATUT_RDV_NOUVEAU);
+        const resultFini = await rdvDetailService.rdvEmployes(idEmploye, page, limit, date, STATUT_RDV_FINI);
+        return res.status(200).json({ fini: resultFini, nouveau: resultPasCommence });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Error Server" });

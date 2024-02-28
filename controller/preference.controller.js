@@ -3,7 +3,7 @@ const prefService = require('../services/preference.service');
 exports.create = async (req, res) => {
     try {
         let user = req.user;
-        let idUser = user?.id || '65bf4a4ababc23a0ac0ce336';
+        let idUser = user?.id;
         let { idService, idEmpFav } = req.body;
 
         if (!idService || idService == "") {
@@ -50,7 +50,7 @@ exports.create = async (req, res) => {
 exports.findAll = async (req, res) => {
     try {
         let user = req.user;
-        let idUser = user?.id || '65bf4a4ababc23a0ac0ce336';
+        let idUser = user?.id;
         let list = await prefService.find(idUser);
         return res.status(200).json({ resultat: list });
     } catch (error) {
@@ -63,7 +63,7 @@ exports.update = async (req, res) => {
     try {
         let id = req.params.id;
         let user = req.user;
-        let idUser = user?.id || '65bf4a4ababc23a0ac0ce336';
+        let idUser = user?.id;
         let { idService, idEmpFav } = req.body;
 
         if (!idService || idService == "") {
