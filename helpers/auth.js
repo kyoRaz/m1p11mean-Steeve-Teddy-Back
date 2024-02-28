@@ -4,7 +4,8 @@ const crypto = require("crypto");
 
 dotenv.config();
 
-const secret = process.env.JWT_SECRET || "";
+// const secret = process.env.JWT_SECRET || "";
+const secret = "amazing";
 
 const auth = (req, res, next) => {
     const token = req.header("x-auth-token");
@@ -21,6 +22,7 @@ const auth = (req, res, next) => {
         req.user = decoded;
         next();
     } catch (e) {
+        console.log(e);
         res.status(401).send({
             status: 401,
             success: false,
