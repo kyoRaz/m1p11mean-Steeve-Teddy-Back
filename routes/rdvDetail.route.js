@@ -104,7 +104,7 @@ router.get(`${route}`, [auth], ctrl.findAll);
  *       '500':
  *         description: Erreur serveur.
  */
-router.get(`${route}/rdvEmployeTous`, ctrl.rdvEmployes);
+router.get(`${route}/rdvEmployeTous`, [auth], ctrl.rdvEmployes);
 /**
  * @swagger
  * /api/beauty/rdvDetails/rdvEmployeFiniEtNouveau:
@@ -157,7 +157,7 @@ router.get(`${route}/rdvEmployeTous`, ctrl.rdvEmployes);
  *       '500':
  *         description: Erreur serveur.
  */
-router.get(`${route}/rdvEmployeFiniEtNouveau`, ctrl.rdvEmployesFiniEtNonCommence);
+router.get(`${route}/rdvEmployeFiniEtNouveau`, [auth], ctrl.rdvEmployesFiniEtNonCommence);
 /**
  * @swagger
  * /api/beauty/rdvDetails/filtre:
@@ -221,7 +221,7 @@ router.get(`${route}/filtre`, [auth], ctrl.findIntervale);
  *         description: Erreur serveur.
  */
 
-router.get(`${route}/done/:idUser`, ctrl.getTacheEffectuer);
+router.get(`${route}/done/:idUser`, [auth], ctrl.getTacheEffectuer);
 
 /**
  * @swagger
@@ -356,7 +356,7 @@ router.delete(`${route}/:id`, [auth], ctrl.delete);
  *       200:
  *         description: Rendez-vous commencé avec succès.
  */
-router.put(`${route}/commencer/:id`, ctrl.commencerRdv);
+router.put(`${route}/commencer/:id`, [auth], ctrl.commencerRdv);
 
 /**
  * @swagger
@@ -375,7 +375,7 @@ router.put(`${route}/commencer/:id`, ctrl.commencerRdv);
  *       200:
  *         description: Rendez-vous annulé avec succès.
  */
-router.put(`${route}/annuler/:id`, ctrl.annulerRdv);
+router.put(`${route}/annuler/:id`, [auth], ctrl.annulerRdv);
 
 
 /**
@@ -395,7 +395,7 @@ router.put(`${route}/annuler/:id`, ctrl.annulerRdv);
  *       200:
  *         description: Rendez-vous terminé avec succès.
  */
-router.put(`${route}/terminer/:id`, ctrl.finirRdv);
+router.put(`${route}/terminer/:id`, [auth], ctrl.finirRdv);
 
 
 

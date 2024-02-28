@@ -289,6 +289,6 @@ router.delete(`${route}/:id`, [auth], ctrl.delete);
  *       400:
  *         description: Requête invalide, informations manquantes ou incorrectes.
  */
-router.post(`${route}/payer/:id`, ctrl.payerRdv);
+router.post(`${route}/payer/:id`, [auth], ctrl.payerRdv);
 
 module.exports = router;
