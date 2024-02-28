@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const ctrl = require('../controller/role.controller');
-
+const { auth } = require('../helpers/auth');
 
 let route = '/roles';
 
@@ -29,7 +29,7 @@ let route = '/roles';
  *       500:
  *         description: Erreur interne du serveur
  */
-router.post(`${route}`, ctrl.create);
+router.post(`${route}`, [auth], ctrl.create);
 
 /**
  * @swagger
@@ -43,7 +43,7 @@ router.post(`${route}`, ctrl.create);
  *       500:
  *         description: Erreur interne du serveur
  */
-router.get(`${route}`, ctrl.findAll);
+router.get(`${route}`, [auth], ctrl.findAll);
 
 /**
  * @swagger
@@ -76,7 +76,7 @@ router.get(`${route}`, ctrl.findAll);
  *       500:
  *         description: Erreur interne du serveur
  */
-router.put(`${route}/:id`, ctrl.update);
+router.put(`${route}/:id`, [auth], ctrl.update);
 
 /**
  * @swagger
@@ -97,6 +97,6 @@ router.put(`${route}/:id`, ctrl.update);
  *       500:
  *         description: Erreur interne du serveur
  */
-router.delete(`${route}/:id`, ctrl.delete);
+router.delete(`${route}/:id`, [auth], ctrl.delete);
 
 module.exports = router;

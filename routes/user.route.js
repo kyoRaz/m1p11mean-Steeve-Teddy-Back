@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const ctrl = require('../controller/user.controller');
+const { auth } = require('../helpers/auth');
 
 
 let route = '/users';
@@ -32,7 +33,7 @@ let route = '/users';
  *       200:
  *         description: Liste paginée des utilisateurs récupérée avec succès
  */
-router.get(`${route}`, ctrl.findAll);
+router.get(`${route}`, [auth], ctrl.findAll);
 
 /**
  * @swagger
@@ -88,7 +89,7 @@ router.post(`${route}/client`, ctrl.signUp);
  *       200:
  *         description: Employé créé avec succès
  */
-router.post(`${route}/employe`, ctrl.createEmploye);
+router.post(`${route}/employe`, [auth], ctrl.createEmploye);
 
 /**
  * @swagger
@@ -140,7 +141,7 @@ router.post(`${route}/activation`, ctrl.activationUser);
  *       200:
  *         description: Utilisateur modifié avec succès
  */
-router.put(`${route}/:id`, ctrl.update );
+router.put(`${route}/:id`, [auth], ctrl.update);
 
 /**
  * @swagger
@@ -196,7 +197,7 @@ router.post(`${route}/pwsd`, ctrl.activeAndPasswd);
  *       200:
  *         description: Liste paginée des utilisateurs récupérée avec succès
  */
-router.get(`${route}/employes`, ctrl.findAllEmp);
+router.get(`${route}/employes`, [auth], ctrl.findAllEmp);
 
 /**
  * @swagger
@@ -208,7 +209,7 @@ router.get(`${route}/employes`, ctrl.findAllEmp);
  *       200:
  *         description: Liste paginée des utilisateurs récupérée avec succès
  */
-router.get(`${route}/employes/all`, ctrl.getListEmploye);
+router.get(`${route}/employes/all`, [auth], ctrl.getListEmploye);
 
 /**
  * @swagger
@@ -230,7 +231,7 @@ router.get(`${route}/employes/all`, ctrl.getListEmploye);
  *       500:
  *         description: Erreur interne du serveur
  */
-router.get(`${route}/:id`, ctrl.getOne);
+router.get(`${route}/:id`, [auth], ctrl.getOne);
 
 /**
  * @swagger
@@ -253,6 +254,6 @@ router.get(`${route}/:id`, ctrl.getOne);
  *       500:
  *         description: Erreur interne du serveur
  */
-router.delete(`${route}/:id`, ctrl.desactiveUser);
+router.delete(`${route}/:id`, [auth], ctrl.desactiveUser);
 
 module.exports = router;

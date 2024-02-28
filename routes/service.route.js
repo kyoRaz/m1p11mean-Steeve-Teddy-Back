@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const ctrl = require('../controller/service.controller');
-
+const { auth } = require('../helpers/auth');
 
 let route = '/services';
 
@@ -36,7 +36,7 @@ let route = '/services';
  *       400:
  *         description: Requête invalide
  */
-router.post(`${route}`, ctrl.create);
+router.post(`${route}`, [auth], ctrl.create);
 
 /**
  * @swagger
@@ -48,7 +48,7 @@ router.post(`${route}`, ctrl.create);
  *       200:
  *         description: Liste des services récupérée avec succès
  */
-router.get(`${route}`, ctrl.findAll);
+router.get(`${route}`, [auth], ctrl.findAll);
 /**
  * @swagger
  * /api/beauty/services/{id}:
@@ -85,7 +85,7 @@ router.get(`${route}`, ctrl.findAll);
  *       200:
  *         description: Service mis à jour avec succès
  */
-router.put(`${route}/:id`, ctrl.update);
+router.put(`${route}/:id`, [auth], ctrl.update);
 /**
  * @swagger
  * /api/beauty/services/{id}:
@@ -103,6 +103,6 @@ router.put(`${route}/:id`, ctrl.update);
  *       200:
  *         description: Service supprimé avec succès
  */
-router.delete(`${route}/:id`, ctrl.delete);
+router.delete(`${route}/:id`, [auth], ctrl.delete);
 
 module.exports = router;

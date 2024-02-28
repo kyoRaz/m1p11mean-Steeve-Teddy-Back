@@ -5,7 +5,7 @@ const outilHelper = require('../helpers/outil');
 exports.create = async (req, res) => {
     try {
         let user = req.user;
-        let idUser = user?.id || '65bf4a4ababc23a0ac0ce336';
+        let idUser = user?.id;
         let { dateRdv, heureRdv } = req.body;
 
         const now = new Date();
@@ -50,7 +50,7 @@ exports.create = async (req, res) => {
 exports.programmerRdv = async (req, res) => {
     try {
         let user = req.user;
-        let idUser = user?.id || '65bf4a4ababc23a0ac0ce336';
+        let idUser = user?.id;
         let { dateRdv, heureRdv, listDetails } = req.body;
 
         const now = new Date();
@@ -226,7 +226,7 @@ exports.payerRdv = async (req, res) => {
 exports.historiqueRdvUser = async (req, res) => {
     try {
         let user = req.user;
-        let idUser = user?.id || '65bf4a4ababc23a0ac0ce336';
+        let idUser = user?.id;
         let { page, limit, dateDebut, dateFin } = req.query;
         let result = await rdvService.historiqueRdv(idUser, page, limit, dateDebut, dateFin);
         res.status(200).json({ size: result.length, resultat: result });
