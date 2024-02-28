@@ -56,6 +56,110 @@ router.post(`${route}`, ctrl.create);
 router.get(`${route}`, ctrl.findAll);
 /**
  * @swagger
+ * /api/beauty/rdvDetails/rdvEmployes:
+ *   get:
+ *     summary: Récupère les rendez-vous d'un employé
+ *     description: Récupère les rendez-vous d'un employé pour une date donnée, avec possibilité de pagination.
+ *     parameters:
+ *       - in: query
+ *         name: idEmploye
+ *         description: ID de l'employé
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: date
+ *         description: Date des rendez-vous
+ *         required: false
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: page
+ *         description: Numéro de page
+ *         required: false
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: limit
+ *         description: Limite de résultats par page
+ *         required: false
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       '200':
+ *         description: Succès de la requête. Renvoie les rendez-vous de l'employé.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 size:
+ *                   type: integer
+ *                   description: Nombre total de rendez-vous
+ *                 resultat:
+ *                   type: array
+ *                   description: Les rendez-vous de l'employé.
+ *                   items:
+ *                     $ref: '#/components/schemas/RdvDetail' # Référence au schéma RdvDetail pour décrire un rendez-vous
+ *       '500':
+ *         description: Erreur serveur.
+ */
+router.get(`${route}/rdvEmployeTous`, ctrl.rdvEmployes);
+/**
+ * @swagger
+ * /api/beauty/rdvDetails/rdvEmployeFiniEtNouveau:
+ *   get:
+ *     summary: Récupère les rendez-vous d'un employé finis et non commencés
+ *     description: Récupère les rendez-vous d'un employé pour une date donnée, avec possibilité de filtrer par statut (fini ou nouveau).
+ *     parameters:
+ *       - in: query
+ *         name: idEmploye
+ *         description: ID de l'employé
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: date
+ *         description: Date des rendez-vous
+ *         required: false
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: page
+ *         description: Numéro de page
+ *         required: false
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: limit
+ *         description: Limite de résultats par page
+ *         required: false
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       '200':
+ *         description: Succès de la requête. Renvoie les rendez-vous finis et non commencés.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 fini:
+ *                   type: array
+ *                   description: Les rendez-vous finis de l'employé.
+ *                   items:
+ *                     $ref: '#/components/schemas/RdvDetail' # Référence au schéma RdvDetail pour décrire un rendez-vous
+ *                 nouveau:
+ *                   type: array
+ *                   description: Les rendez-vous non commencés de l'employé.
+ *                   items:
+ *                     $ref: '#/components/schemas/RdvDetail' # Référence au schéma RdvDetail pour décrire un rendez-vous
+ *       '500':
+ *         description: Erreur serveur.
+ */
+router.get(`${route}/rdvEmployeFiniEtNouveau`, ctrl.rdvEmployesFiniEtNonCommence);
+/**
+ * @swagger
  * /api/beauty/rdvDetails/filtre:
  *   get:
  *     summary: Filtre les détails de rendez-vous par intervalle de temps
@@ -292,6 +396,7 @@ router.put(`${route}/annuler/:id`, ctrl.annulerRdv);
  *         description: Rendez-vous terminé avec succès.
  */
 router.put(`${route}/terminer/:id`, ctrl.finirRdv);
+
 
 
 module.exports = router;
