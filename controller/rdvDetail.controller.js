@@ -246,3 +246,48 @@ exports.delete = async (req, res) => {
         res.status(500).json({ message: "Error Server" });
     }
 }
+
+exports.getTacheEffectuer = async (req, res) => {
+    try {
+        const { idUser } = req.params;
+        const { debut, fin, page, pageSize } = req.query;
+
+        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+        if ((!debut || !fin || !dateRegex.test(debut) || !dateRegex.test(fin)) && (debut || fin)) {
+            return res.status(400).json({ message: "Les dates doivent être au format YYYY-MM-DD." });
+        }
+
+        const pageNum = parseInt(page, 10) || 1;
+        const pageSizeNum = parseInt(pageSize, 10) || 10;
+
+        const result = await rdvDetailService.getTacheEffectue(idUser, debut, fin, pageNum, pageSizeNum);
+
+        return res.status(200).json(result);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+};
+
+exports.rdvEmployes = async (req, res)=> {
+    try{
+        const { idEmploye, date, page, limit } = req.query;
+        const result = await rdvDetailService.rdvEmployes(idEmploye,page,limit,date);
+        return res.status(200).json({ size: result.length, resultat: result });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}
+
+exports.rdvEmployesFiniEtNonCommence = async (req, res)=> {
+    try{
+        const { idEmploye, date, page, limit } = req.query;
+        const resultPasCommence = await rdvDetailService.rdvEmployes(idEmploye,page,limit,date,STATUT_RDV_NOUVEAU);
+        const resultFini = await rdvDetailService.rdvEmployes(idEmploye,page,limit,date,STATUT_RDV_FINI);
+        return res.status(200).json({ fini: resultFini, nouveau: resultPasCommence  });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error Server" });
+    }
+}

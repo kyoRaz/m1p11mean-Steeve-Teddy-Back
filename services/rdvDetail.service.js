@@ -4,6 +4,7 @@ const Service = require('../models/Service');
 const horaireService = require('./horaire.service');
 const { STATUT_RDV_FINI, STATUT_RDV_NOUVEAU } = require('../helpers/constants');
 const { ValidationError } = require('../helpers/ValidationError');
+const { completeTimeFormat } = require('../helpers/outil');
 
 const create = async (data) => {
     try {
@@ -18,7 +19,7 @@ const create = async (data) => {
 const createDetail = async (idRdv, detail, session) => {
     try {
         const service = await Service.findById(detail.idService);
-        if(!service){
+        if (!service) {
             throw new ValidationError("Service non trouvé")
         }
 
@@ -26,8 +27,8 @@ const createDetail = async (idRdv, detail, session) => {
             idRdv,
             idService: detail.idService,
             idEmploye: detail.idEmploye,
-            debutService: detail.debutService,
-            finService: detail.finService,
+            debutService: completeTimeFormat(detail.debutService),
+            finService: completeTimeFormat(detail.finService),
             statusService: STATUT_RDV_NOUVEAU,
             prixService: service.prix
         }
@@ -65,6 +66,9 @@ const findById = async (id) => {
 
 const update = async (id, data) => {
     try {
+        const rdvDetails = await RdvDetail.findById(id);
+        data.debutService = completeTimeFormat(rdvDetails.debutService);
+        data.finService = completeTimeFormat(rdvDetails.finService);
         const update = {
             $set: data
         };
@@ -217,6 +221,8 @@ const historiqueRdvUsers = async (idUser, page, limit) => {
     }
 }
 
+
+
 const commissionObtenuEmploye = async (idEmploye, date) => {
     try {
         const result = await RdvDetail.aggregate([
@@ -316,8 +322,182 @@ const findByIdRDV = async (id) => {
     }
 }
 
+const getTacheEffectue = async (idEmploye, start, end, page = 1, pageSize = 10) => {
+    try {
+        let matchCondition = {
+            idEmploye: new mongoose.Types.ObjectId(idEmploye),
+            statusService: "Fini"
+        };
+
+        if (start && end) {
+            matchCondition["rdvInfo.dateRdv"] = { $gte: new Date(start), $lte: new Date(end) };
+        } else if (start) {
+            matchCondition["rdvInfo.dateRdv"] = { $gte: new Date(start) };
+        } else if (end) {
+            matchCondition["rdvInfo.dateRdv"] = { $lte: new Date(end) };
+        }
+
+        let skip = (page - 1) * pageSize;
+
+        const total = await RdvDetail.aggregate([
+            {
+                $lookup: {
+                    from: "rdvs",
+                    localField: "idRdv",
+                    foreignField: "_id",
+                    as: "rdvInfo"
+                }
+            },
+            { $unwind: "$rdvInfo" },
+            {
+                $match: matchCondition
+            },
+            {
+                $count: "total"
+            }
+        ]);
+
+        const totalCount = total.length > 0 ? total[0].total : 0;
+
+        let result = await RdvDetail.aggregate([
+            {
+                $lookup: {
+                    from: "rdvs",
+                    localField: "idRdv",
+                    foreignField: "_id",
+                    as: "rdvInfo"
+                }
+            },
+            { $unwind: "$rdvInfo" },
+            {
+                $match: matchCondition
+            },
+            {
+                $lookup: {
+                    from: "services",
+                    localField: "idService",
+                    foreignField: "_id",
+                    as: "serviceInfo"
+                }
+            },
+            { $unwind: "$serviceInfo" },
+            {
+                $sort: { "rdvInfo.dateRdv": -1 }
+            },
+            { $skip: skip },
+            { $limit: pageSize }
+        ]);
+
+        return {
+            totalPages: Math.ceil(totalCount / pageSize),
+            currentPage: page,
+            pageSize: pageSize,
+            total: totalCount,
+            data: result
+        };
+    } catch (error) {
+        console.error(error);
+        throw new Error("Server Error");
+    }
+};
 
 
+const rdvEmployes = async (idEmploye, page, limit,date,status) => {
+    try {
+        if (!page) {
+            page = 1;
+        } else {
+            page = parseInt(page);
+        }
+        if (!limit) {
+            limit = 10;
+        } else {
+            limit = parseInt(limit);
+        }
+
+        if(!date){
+            date = new Date();
+        }else{
+            date = new Date(date);
+        }
+        let filtre = {
+            idEmploye: new mongoose.Types.ObjectId(idEmploye),
+            "rdvDetails.dateRdv" : date
+        }
+        if(status){
+            filtre.statusService = status;
+        }
+
+        
+        const skipIndex = (page - 1) * limit;
+        const historique = await RdvDetail.aggregate([
+            {
+                // Effectuez une jointure avec la collection 'rdv' pour obtenir les informations sur le rendez-vous
+                $lookup: {
+                    from: "rdvs",
+                    localField: "idRdv",
+                    foreignField: '_id',
+                    as: "rdvDetails"
+                }
+            },
+            // Déroulez le tableau 'rdvDetails' pour obtenir les détails de rendez-vous
+            { $unwind: '$rdvDetails' },
+            // Filtrez les rendez-vous pour l'utilisateur donné
+            { $match: filtre
+            },
+            {
+                $lookup: {
+                    from: 'services',
+                    localField: 'idService',
+                    foreignField: '_id',
+                    as: 'serviceDetails'
+                }
+            },
+            // Déroulez le tableau 'serviceDetails' pour obtenir les détails du service
+            { $unwind: '$serviceDetails' },
+            {
+                $lookup: {
+                    from: 'utilisateurs',
+                    localField: 'rdvDetails.idUser',
+                    foreignField: '_id',
+                    as: 'utilisateurDetails'
+                }
+            },
+            // Déroulez le tableau 'serviceDetails' pour obtenir les détails du service
+            { $unwind: '$utilisateurDetails' },
+            { $sort: { debutService: -1 } },
+            {
+                $project: {
+                    _id: 1,
+                    dateRdv: "$rdvDetails.dateRdv",
+                    debutService: 1,
+                    finService: 1,
+                    statusService: 1,
+                    service: {
+                        id: '$serviceDetails._id',
+                        nom: '$serviceDetails.nom',
+                        delai: '$serviceDetails.delai',
+                        prix: '$serviceDetails.prix',
+                    },
+                    utilisateur: {
+                        id: "$utilisateurDetails._id",
+                        nom: "$utilisateurDetails.nom",
+                        prenom: "$utilisateurDetails.prenom"
+                    },
+                }
+            },
+            // Pagination
+            { $skip: skipIndex }, // sauter les premiers résultats
+            { $limit: limit }, // limiter le nombre de résultats retournés
+            
+        ]);
+        return historique;
+    } catch (error) {
+        throw error;
+    } finally {
+
+    }
+}
 
 module.exports = {
     create,
@@ -330,5 +510,7 @@ module.exports = {
     findAvailableUsers,
     historiqueRdvUsers,
     commissionObtenuEmploye,
-    findByIdRDV
+    findByIdRDV,
+    getTacheEffectue,
+    rdvEmployes
 }

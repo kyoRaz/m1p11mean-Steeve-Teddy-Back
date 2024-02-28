@@ -1,12 +1,19 @@
 const Paiement = require('../models/Paiement');
 const Caisse = require("../models/Caisse");
+const Rdv = require("../models/Rdv");
 const { ETAT_ANNULE, ETAT_VALIDE, ETAT_CREE } = require('../helpers/constants');
 const { ValidationError } = require('../helpers/ValidationError');
 
 // Create
 const createPaiement = async (data) => {
     try {
+        const {montant} = data;
+        if(montant<=0) {
+            throw new ValidationError("Veuillez insérer un montant strictement positif");
+        }
         const paiement = await Paiement.create(data); 
+        let dataRdv = {isPaid: true};
+        await Rdv.findByIdAndUpdate(paiement?.idrdv,dataRdv);
         return paiement;
     } catch (error) {
         if (error.name === 'ValidationError' || error.code === 11000) {
@@ -29,6 +36,8 @@ const annulerPaiement = async (id) => {
         if(paiement?.etat === ETAT_VALIDE){
             throw new ValidationError("Impossible d'annuler un paiement déjà validé");
         }
+        let dataRdv = {isPaid: false};
+        await Rdv.findByIdAndUpdate(paiement?.idrdv,dataRdv);
         paiement = await Paiement.findByIdAndUpdate(id,data,{new: true});
         return paiement;
     }catch (error) {
