@@ -14,6 +14,7 @@ const createPaiement = async (data) => {
         const paiement = await Paiement.create(data); 
         let dataRdv = {isPaid: true};
         await Rdv.findByIdAndUpdate(paiement?.idrdv,dataRdv);
+        await validerPaiement(paiement._id);
         return paiement;
     } catch (error) {
         if (error.name === 'ValidationError' || error.code === 11000) {
