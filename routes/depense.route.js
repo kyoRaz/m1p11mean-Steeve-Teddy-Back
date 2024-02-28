@@ -10,6 +10,8 @@ router.post(`${route}`, ctrl.create);
 
 router.get(`${route}`, ctrl.findAll);
 
+router.get(`${route}/filtre`, ctrl.find);
+
 
 router.put(`${route}/:id`, ctrl.update);
 

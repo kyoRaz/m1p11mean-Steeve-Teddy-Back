@@ -269,4 +269,26 @@ router.put(`${route}/:id`, ctrl.update);
  */
 router.delete(`${route}/:id`, ctrl.delete);
 
+/**
+ * @swagger
+ * /api/beauty/rdvs/{id}:
+ *   post:
+ *     summary: Met à jour un rendez-vous par son ID
+ *     description: Met à jour les informations d'un rendez-vous existant.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: L'ID du rendez-vous à mettre à jour.
+ *     
+ *     responses:
+ *       200:
+ *         description: Rendez-vous payer avec succès.
+ *       400:
+ *         description: Requête invalide, informations manquantes ou incorrectes.
+ */
+router.post(`${route}/payer/:id`, ctrl.payerRdv);
+
 module.exports = router;
