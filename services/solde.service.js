@@ -49,7 +49,7 @@ const enleverSolde = async (data) => {
 
 const getSolde = async (idUser) => {
     try{
-        const soldeTotal = Solde.aggregate([
+        const soldeTotal = await Solde.aggregate([
             {
                 $match: { idUser: new mongoose.Types.ObjectId(idUser) } // Filtre les documents par l'ID d'utilisateur spécifié
             },
@@ -60,8 +60,7 @@ const getSolde = async (idUser) => {
                 }
             }
         ]);
-
-        return soldeTotal?.total ? soldeTotal?.total : 0
+        return soldeTotal[0]?.total ? soldeTotal[0]?.total : 0
     } catch (error) {
         throw error;
     }

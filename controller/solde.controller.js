@@ -11,7 +11,12 @@ exports.create = async (req,res) => {
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: "Error Server" });
+        if (error.name === 'ValidationError' || error.code === 11000) { // Vérifiez le type d'erreur ou le code d'erreur spécifique
+            return res.status(400).json({ message: 'Erreur de validation', error: error.message });
+        } else { // Gérer les autres erreurs avec un code 500
+            console.error('Erreur interne:', error);
+            return res.status(500).json({message: "Erreur interne"});
+        }
     }
 }
 
@@ -23,6 +28,11 @@ exports.getSolde = async (req,res) => {
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: "Error Server" });
+        if (error.name === 'ValidationError' || error.code === 11000) { // Vérifiez le type d'erreur ou le code d'erreur spécifique
+            return res.status(400).json({ message: 'Erreur de validation', error: error.message });
+        } else { // Gérer les autres erreurs avec un code 500
+            console.error('Erreur interne:', error);
+            return res.status(500).json({message: "Erreur interne"});
+        }
     }
 }
