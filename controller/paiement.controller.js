@@ -1,5 +1,6 @@
 const { isNumber, casteNbr } = require('../helpers/outil');
 const paiementService = require('../services/paiement.service');
+const soldeService = require('../services/solde.service');
 const rdvService = require('../services/rdv.service');
 
 
@@ -16,6 +17,9 @@ const createPaiement = async (req, res,next) => {
             const rdv = await rdvService.findById(idrdv);
             if(!rdv){
                 return res.status(400).json({message: "Bad Request",details: "Veuillez préciser un rendez-vous existant !"});
+            }else{
+                const data = {montant: -montant,idUser: rdv.idUser}
+                await soldeService.enleverSolde(data);
             }
         }
 
